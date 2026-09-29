@@ -80,15 +80,15 @@ section{margin-top:40px}
 .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
 
 /* overview flow */
-.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px;counter-reset:st}
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px;counter-reset:st}
 .flow a{position:relative;display:block;background:var(--card);border-radius:14px;padding:14px 14px 14px;color:var(--ink);box-shadow:var(--shadow);border-top:4px solid var(--c);transition:transform .15s}
 .flow a:hover{transform:translateY(-3px)}
 .flow a .no{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--c);font-weight:700}
 .flow a .t{font-weight:700;font-size:16px;margin:2px 0 6px}
 .flow a .d{font-size:13px;color:var(--muted);line-height:1.6}
-.flow a:not(:last-child):not(:nth-child(4)):after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:8px;border-top:2px solid #98a2b3;border-right:2px solid #98a2b3;transform:translateY(-50%) rotate(45deg);z-index:2}
-.loopnote{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.loopnote .lp{grid-column:3/5;margin:0 16% 0;height:18px;border:2px dashed #fb923c;border-top:0;border-radius:0 0 12px 12px;position:relative;text-align:center}
+.flow a:not(:nth-child(3n)):after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:8px;border-top:2px solid #98a2b3;border-right:2px solid #98a2b3;transform:translateY(-50%) rotate(45deg);z-index:2}
+.loopnote{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.loopnote .lp{grid-column:2/4;margin:0 16% 0;height:18px;border:2px dashed #fb923c;border-top:0;border-radius:0 0 12px 12px;position:relative;text-align:center}
 .loopnote .lp:before{content:"";position:absolute;left:-7px;top:-2px;border:6px solid transparent;border-bottom:9px solid #fb923c;border-top:0}
 .loopnote .lp span{position:absolute;right:0;top:14px;background:var(--bg);padding:0 0 0 8px;font-size:12.5px;color:#c2410c;white-space:nowrap}
 .facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:30px}
@@ -279,6 +279,47 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   .rq li{grid-template-columns:34px 1fr}.rq li .what{grid-column:2}
 }
 @media print{.layer,.pipe2,.rq li{break-inside:avoid}}
+
+/* ===== v3: persona + scope ===== */
+:root{--c9:#db2777;--c9-soft:#fdf2f8}
+.persona{display:grid;grid-template-columns:260px 1fr;gap:18px;align-items:stretch}
+.pcard{background:linear-gradient(160deg,#831843,#db2777);color:#fff;border-radius:16px;padding:22px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;text-align:center}
+.pcard .av{width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:44px;border:2px solid rgba(255,255,255,.4)}
+.pcard .nm{font-size:19px;font-weight:700;margin-top:12px}
+.pcard .rl{font-size:13px;opacity:.9;margin-top:2px}
+.pcard .tg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.pcard .tg span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 10px;font-size:12.5px}
+.pfields{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:6px 20px}
+.pf{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px;align-items:start}
+.pf:last-child{border-bottom:0}
+.pf .k{color:var(--c9);font-weight:700;font-size:14px}
+.pain{display:grid;grid-template-columns:1fr auto 1fr auto 1.2fr;gap:12px;align-items:center;margin-top:6px}
+.pain .pb{background:var(--c9-soft);border:1px solid #fbcfe8;border-radius:12px;padding:14px;text-align:center;font-size:14.5px}
+.pain .pb b{display:block;font-size:16px;color:#9d174d}
+.pain .pb.res{background:#fff1f2;border-color:#fecdd3}
+.pain .op{font-size:20px;font-weight:700;color:#98a2b3;text-align:center}
+.okbox{border:1.5px solid var(--ok);background:var(--ok-soft);border-radius:12px;padding:12px 16px;font-size:15px;margin-bottom:16px}
+.okbox b{color:var(--ok)}
+.scope{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
+.scope .lv{border-radius:14px;padding:16px 18px;position:relative}
+.scope .lv h4{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.scope .lv p{margin:4px 0;font-size:15px}
+.scope .now{background:#eff6ff;border:1.5px solid #93c5fd}
+.scope .now h4{color:#1d4ed8}
+.scope .fut{background:#f5f3ff;border:1.5px dashed #a78bfa}
+.scope .fut h4{color:#6d28d9}
+.scope .ar{align-self:center;font-size:22px;color:#98a2b3;font-weight:700}
+.scope .chipline{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.scope .chipline span{font-size:12.5px;background:#fff;border:1px solid #ddd6fe;color:#5b21b6;border-radius:999px;padding:2px 10px}
+.fact.wide{grid-column:1/-1}
+.disc .none{font-size:14.5px;color:var(--muted);padding:4px 0}
+@media (max-width:900px){
+  .persona{grid-template-columns:1fr}
+  .pf{grid-template-columns:1fr;gap:2px}
+  .pain{grid-template-columns:1fr}.pain .op{transform:rotate(90deg)}
+  .scope{grid-template-columns:1fr}.scope .ar{transform:rotate(90deg);text-align:center}
+}
+@media print{.persona,.pain,.scope{break-inside:avoid}.pcard{background:#fff!important;color:#000;border:2px solid #db2777}}
 </style>
 </head>
 <body>
@@ -286,23 +327,24 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
 
 <div class="topbar"><b>🔧 维修助手 · 生命周期框架</b><button id="navBtn" aria-label="打开目录">目录</button></div>
 <div class="chips" id="chips">
-  <a href="#overview">总览</a><a href="#s1">01 需求</a><a href="#s2">02 概念</a><a href="#workflow">03 作业流程</a><a href="#s3">04 原型</a><a href="#s4">05 开发</a><a href="#tech">06 技术实现</a><a href="#s5">07 上线</a><a href="#s6">08 迭代</a><a href="#todo">待确认汇总</a>
+  <a href="#overview">总览</a><a href="#persona">01 画像</a><a href="#s1">02 需求</a><a href="#s2">03 概念</a><a href="#workflow">04 作业流程</a><a href="#s3">05 原型</a><a href="#s4">06 开发</a><a href="#tech">07 技术实现</a><a href="#s5">08 上线</a><a href="#s6">09 迭代</a><a href="#todo">待确认汇总</a>
 </div>
 
 <aside class="side" id="side">
   <div class="logo"><i>🔧</i>维修助手</div>
-  <div class="sub">产品生命周期框架 · 讨论稿 v2 · 2026-09-29</div>
+  <div class="sub">产品生命周期框架 · 讨论稿 v3 · 2026-09-29</div>
   <nav id="nav">
     <a href="#overview"><span class="n">00</span>总览 · 一页看懂</a>
     <div class="grp">生命周期框架</div>
-    <a href="#s1"><span class="n">01</span>需求洞察</a>
-    <a href="#s2"><span class="n">02</span>概念定义</a>
-    <a href="#workflow"><span class="n">03</span>用户端作业流程</a>
-    <a href="#s3"><span class="n">04</span>原型验证</a>
-    <a href="#s4"><span class="n">05</span>开发</a>
-    <a href="#tech"><span class="n">06</span>技术实现</a>
-    <a href="#s5"><span class="n">07</span>上线运营</a>
-    <a href="#s6"><span class="n">08</span>迭代优化</a>
+    <a href="#persona"><span class="n">01</span>用户画像</a>
+    <a href="#s1"><span class="n">02</span>需求洞察</a>
+    <a href="#s2"><span class="n">03</span>概念定义</a>
+    <a href="#workflow"><span class="n">04</span>用户端作业流程</a>
+    <a href="#s3"><span class="n">05</span>原型验证</a>
+    <a href="#s4"><span class="n">06</span>开发（黑盒）</a>
+    <a href="#tech"><span class="n">07</span>技术实现</a>
+    <a href="#s5"><span class="n">08</span>上线运营</a>
+    <a href="#s6"><span class="n">09</span>迭代优化</a>
     <div class="grp">讨论用</div>
     <a href="#todo"><span class="n">★</span>待确认问题汇总</a>
   </nav>
@@ -317,9 +359,9 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
 <header class="hero" id="top">
   <div class="kicker">PRODUCT LIFECYCLE FRAMEWORK</div>
   <h1>《维修助手 · 产品生命周期框架》</h1>
-  <p>面向保外设备一线维修技术人员的 AI 维修助手应用。本页把通话中从头到尾讨论的内容，按「需求洞察 → 概念定义 → 原型验证 → 开发 → 上线运营 → 迭代优化」六个阶段整理成一份完整框架，并单列两个专章：「概念定义」之后的「用户端作业流程」、「开发」之后的「技术实现」，方便对着看、边看边讨论。</p>
+  <p>面向保外设备一线维修技术人员的 AI 维修助手应用。本页把通话中从头到尾讨论的内容，按「用户画像 → 需求洞察 → 概念定义 → 原型验证 → 开发 → 上线运营 → 迭代优化」整理成一份完整框架，并单列两个专章：「概念定义」之后的「用户端作业流程」、「开发」之后的「技术实现」，方便对着看、边看边讨论。</p>
   <div class="meta">
-    <span>📅 2026-09-29</span><span>📝 讨论稿 v2</span><span>🗂 6 个阶段 + 2 个专章</span><span>🔄 v2 · 新增「用户端作业流程」「技术实现」</span><span>🎯 MVP：路由器 / 电源适配器</span>
+    <span>📅 2026-09-29</span><span>📝 讨论稿 v3</span><span>🗂 9 个章节</span><span>🔄 v3 · 用户画像独立成章 · 范围分两层 · 技师访谈已确认</span><span>🎯 MVP：路由器 / 电源适配器</span>
   </div>
   <div class="tools">
     <button onclick="window.print()">🖨 打印 / 导出 PDF</button>
@@ -336,14 +378,15 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   <div class="one-line">一句话：<b>给保外设备的一线维修技师，一个“看得见、听得懂、有出处”的 AI 维修助手应用</b>——摄像头识别型号、语音问诊、可视化一步步指导拆解和检查直到修好，按订阅付费。</div>
 
   <div class="flow">
-    <a href="#s1" style="--c:var(--c1)"><div class="no">01</div><div class="t">需求洞察</div><div class="d">保外设备一线技师；信息零散、真假难辨；订阅付费</div></a>
-    <a href="#s2" style="--c:var(--c2)"><div class="no">02</div><div class="t">概念定义</div><div class="d">AI 辅助应用；型号识别 + 语音问诊 + 可视化拆解指导</div></a>
-    <a href="#workflow" style="--c:var(--c7)"><div class="no">03 · 专章</div><div class="t">用户端作业流程</div><div class="d">拍照识别 → 语音描述 → 检索标来源 → 爆炸图教拆解 → 实时纠正 → 记录反哺</div></a>
-    <a href="#s3" style="--c:var(--c3)"><div class="no">04</div><div class="t">原型验证</div><div class="d">MVP 聚焦一条最简单设备，全流程跑通，样机测试</div></a>
-    <a href="#s4" style="--c:var(--c4)"><div class="no">05</div><div class="t">开发</div><div class="d">全部自研；开发阶段按黑盒处理</div></a>
-    <a href="#tech" style="--c:var(--c8)"><div class="no">06 · 专章</div><div class="t">技术实现</div><div class="d">跨平台应用 + API 服务 / 向量数据库 + RAG 挂原文出处；应用商店 + 容器化</div></a>
-    <a href="#s5" style="--c:var(--c5)"><div class="no">07</div><div class="t">上线运营</div><div class="d">首批用户 = 固定客户，直接试用，收集反馈</div></a>
-    <a href="#s6" style="--c:var(--c6)"><div class="no">08</div><div class="t">迭代优化</div><div class="d">按反馈补知识库、改进引导效果</div></a>
+    <a href="#persona" style="--c:var(--c9)"><div class="no">01</div><div class="t">用户画像</div><div class="d">保外设备一线维修技师；靠师傅口口相传 + 网上搜索；信息零散、真假难辨</div></a>
+    <a href="#s1" style="--c:var(--c1)"><div class="no">02</div><div class="t">需求洞察</div><div class="d">过保维修步骤指引与排障帮助；订阅付费；技师访谈已确认方向、痛点、付费意愿</div></a>
+    <a href="#s2" style="--c:var(--c2)"><div class="no">03</div><div class="t">概念定义</div><div class="d">AI 辅助应用；型号识别 + 语音问诊 + 可视化拆解指导</div></a>
+    <a href="#workflow" style="--c:var(--c7)"><div class="no">04 · 专章</div><div class="t">用户端作业流程</div><div class="d">拍照识别 → 语音描述 → 检索标来源 → 爆炸图教拆解 → 实时纠正 → 记录反哺</div></a>
+    <a href="#s3" style="--c:var(--c3)"><div class="no">05</div><div class="t">原型验证</div><div class="d">MVP 聚焦一条最简单设备，全流程跑通，样机测试</div></a>
+    <a href="#s4" style="--c:var(--c4)"><div class="no">06</div><div class="t">开发（黑盒）</div><div class="d">全部自研；开发阶段按黑盒处理</div></a>
+    <a href="#tech" style="--c:var(--c8)"><div class="no">07 · 专章</div><div class="t">技术实现</div><div class="d">跨平台应用 + API 服务 / 向量数据库 + RAG 挂原文出处；应用商店 + 容器化</div></a>
+    <a href="#s5" style="--c:var(--c5)"><div class="no">08</div><div class="t">上线运营</div><div class="d">首批用户 = 固定客户，直接试用，收集反馈</div></a>
+    <a href="#s6" style="--c:var(--c6)"><div class="no">09</div><div class="t">迭代优化</div><div class="d">按反馈补知识库、改进引导效果</div></a>
   </div>
   <div class="loopnote"><div class="lp"><span>↺ 反馈闭环：试用反馈 → 补知识库 / 改进引导 → 再上线</span></div></div>
 
@@ -356,26 +399,71 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
     <div class="fact"><div class="k">MVP 范围</div><div class="v">一条最简单设备（如路由器或电源适配器）全流程</div></div>
     <div class="fact"><div class="k">MVP 验收</div><div class="v">技师不看说明书、只靠应用独立完成一次维修</div></div>
     <div class="fact"><div class="k">开发 / 上线</div><div class="v">全部自研（黑盒）；首批给固定客户试用</div></div>
+    <div class="fact wide"><div class="k">产品范围（见 03）</div><div class="v">前期：只做电子手持设备的保外维修（超出厂方免费保修期即保外）；后期愿景：全生命周期辅助，覆盖生产、组装和维修，扩展到所有需要组装的电子设备。</div></div>
   </div>
 </section>
 
-<!-- ================= 01 ================= -->
+<!-- ================= 01 用户画像 ================= -->
+<section id="persona" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c9)">01</div>
+    <h2><span class="en">USER PERSONA</span>用户画像</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c9)">我们服务的人：<b>保外设备的一线维修技术人员</b>——现在靠<b>师傅口口相传</b>和<b>网上搜索</b>找维修信息，信息<b>零散、真假难辨</b>。</div>
+
+  <div class="persona">
+    <div class="pcard">
+      <div class="av">👷</div>
+      <div class="nm">一线维修技师</div>
+      <div class="rl">保外设备维修</div>
+      <div class="tg"><span>一线</span><span>保外维修</span><span>订阅付费</span></div>
+    </div>
+    <div class="pfields">
+      <div class="pf"><div class="k">身份</div><div>一线维修技术人员 <span class="tag t-ok">已确认</span></div></div>
+      <div class="pf"><div class="k">维修对象</div><div>保外设备 <span class="tag t-ok">已确认</span><br><span class="muted small">超出厂方免费保修期的都算保外；前期只做电子手持设备（见 03 范围）。</span></div></div>
+      <div class="pf"><div class="k">现在怎么找信息</div><div>靠师傅<b>口口相传</b> + <b>网上搜索</b> <span class="tag t-ok">已确认</span></div></div>
+      <div class="pf"><div class="k">信息现状</div><div><b>零散</b>、<b>真假难辨</b> <span class="tag t-ok">已确认</span></div></div>
+      <div class="pf"><div class="k">核心诉求</div><div>设备过保后的维修步骤指引和排障帮助（见 02） <span class="tag t-ok">已确认</span></div></div>
+      <div class="pf"><div class="k">付费方式</div><div>订阅（见 02） <span class="tag t-ok">已确认</span></div></div>
+      <div class="pf"><div class="k">验证状态</div><div>技师访谈已完成，方向、痛点和付费意愿已确认 <span class="tag t-ok">已确认</span></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>😣 当前的信息困境 <span class="tag t-ok">已确认</span></h3>
+    <div class="pain">
+      <div class="pb"><b>师傅口口相传</b>经验靠人传人</div>
+      <div class="op">+</div>
+      <div class="pb"><b>网上搜索</b>自己上网找</div>
+      <div class="op">=</div>
+      <div class="pb res"><b>信息零散、真假难辨</b>这正是维修助手要解决的问题</div>
+    </div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 用户画像</h3>
+    <div class="none">本章暂无待确认问题（技师访谈已完成，方向、痛点和付费意愿已确认）。</div>
+  </div>
+</section>
+
+<!-- ================= 02 ================= -->
 <section id="s1" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c1)">01</div>
+    <div class="sec-no" style="background:var(--c1)">02</div>
     <h2><span class="en">NEEDS INSIGHT</span>需求洞察</h2>
   </div>
-  <div class="one-line" style="border-left-color:var(--c1)">谁在痛、痛在哪、愿不愿意付钱：<b>保外设备的一线维修技师</b>缺少可靠的过保维修指引，愿意以<b>订阅</b>方式付费。</div>
+  <div class="one-line" style="border-left-color:var(--c1)">谁在痛、痛在哪、愿不愿意付钱：<b>保外设备的一线维修技师</b>（见 01 用户画像）缺少可靠的过保维修指引，愿意以<b>订阅</b>方式付费。</div>
+  <div class="okbox">✅ <b>技师访谈已完成，方向、痛点和付费意愿已确认。</b> <span class="tag t-ok">已确认</span></div>
 
   <div class="grid g3">
-    <div class="card"><h3>👷 目标用户 <span class="tag t-ok">已确认</span></h3>
-      <p><b>保外设备的一线维修技术人员。</b></p>
-      <p class="muted small">设备已过保，原厂支持通常不再覆盖，由一线技师上手处理。</p></div>
+    <div class="card"><h3>🎤 技师访谈 <span class="tag t-ok">已确认</span></h3>
+      <p><b>已完成。</b></p>
+      <ul><li>方向：已确认</li><li>痛点：已确认</li><li>付费意愿：已确认</li></ul></div>
     <div class="card"><h3>🧩 核心需求 <span class="tag t-ok">已确认</span></h3>
       <ul><li>设备过保后的<b>维修步骤指引</b></li><li>遇到问题时的<b>排障帮助</b></li></ul></div>
     <div class="card"><h3>💳 付费形式 <span class="tag t-ok">已确认</span></h3>
       <p><b>订阅制。</b></p>
-      <p class="muted small">具体价格、周期、付费主体尚未讨论（见下方待确认）。</p></div>
+      <p class="muted small">付费意愿已经技师访谈确认；具体价格、周期、付费主体尚未讨论（见下方待确认）。</p></div>
   </div>
 
   <div class="card" style="margin-top:16px">
@@ -396,19 +484,35 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
     <ol>
       <li><input type="checkbox" id="q1-1"><label for="q1-1">订阅由谁付费：技师个人，还是所在的维修店 / 服务公司？</label></li>
       <li><input type="checkbox" id="q1-2"><label for="q1-2">订阅的定价与周期（按月 / 按年 / 分档）如何设计？</label></li>
-      <li><input type="checkbox" id="q1-3"><label for="q1-3">第一阶段优先覆盖哪些设备品类？“保外设备”的边界怎么划？</label></li>
-      <li><input type="checkbox" id="q1-4"><label for="q1-4">是否需要先对几位一线技师做访谈，确认痛点排序和付费意愿？<span class="tag t-sug">建议</span></label></li>
     </ol>
   </div>
 </section>
 
-<!-- ================= 02 ================= -->
+<!-- ================= 03 ================= -->
 <section id="s2" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c2)">02</div>
+    <div class="sec-no" style="background:var(--c2)">03</div>
     <h2><span class="en">CONCEPT DEFINITION</span>概念定义</h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c2)">产品形态是<b>应用（不是小程序）</b>，<b>AI 辅助</b>：看得见设备、听得懂问题、按知识库一步步教到修好。</div>
+
+  <div class="card" id="scope">
+    <h3>🎯 范围</h3>
+    <div class="scope">
+      <div class="lv now">
+        <h4>① 前期（收敛） <span class="tag t-ok">已确认</span></h4>
+        <p>只做<b>电子手持设备</b>的<b>保外维修</b>；</p>
+        <p>超出厂方免费保修期的都算保外。</p>
+      </div>
+      <div class="ar">→</div>
+      <div class="lv fut">
+        <h4>② 后期愿景 <span class="tag t-ok">已确认</span></h4>
+        <p><b>全生命周期辅助</b>，覆盖<b>生产、组装和维修</b>；</p>
+        <p>设备扩展到<b>所有需要组装的电子设备</b>，小到仪器仪表，大到汽车、飞机、火箭。</p>
+        <div class="chipline"><span>仪器仪表</span><span>汽车</span><span>飞机</span><span>火箭</span></div>
+      </div>
+    </div>
+  </div>
 
   <div class="grid g2">
     <div class="card"><h3>📱 产品形态 <span class="tag t-ok">已确认</span></h3>
@@ -473,10 +577,10 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<!-- ================= 03 用户端作业流程 (NEW) ================= -->
+<!-- ================= 04 用户端作业流程 ================= -->
 <section id="workflow" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c7)">03</div>
+    <div class="sec-no" style="background:var(--c7)">04</div>
     <h2><span class="en">USER-SIDE WORKFLOW</span>用户端作业流程 <span class="tag newtag">v2 新增</span></h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c7)">从技师打开应用到设备修好的<b>完整作业链路</b>：拍照识别 → 语音描述 → 检索并<b>标注来源</b> → 爆炸图<b>可视化教拆解</b> + 摄像头<b>实时纠正</b> → 修好 → 生成维修记录，<b>存进产品库、反哺知识库</b>。</div>
@@ -518,7 +622,7 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
       <div class="nd rc"><b>维修记录</b>存进产品库</div>
     </div>
     <div class="df-loop"><div class="lp"><span>↺ 维修记录 反哺 知识库</span></div></div>
-    <p class="muted small df-note">说明：维修记录一方面<b>存进产品库</b>，一方面<b>反哺知识库</b>；与 02 中「维修记录供复盘和给厂家反馈」、08 中「按反馈补知识库」相互衔接。</p>
+    <p class="muted small df-note">说明：维修记录一方面<b>存进产品库</b>，一方面<b>反哺知识库</b>；与 03 中「维修记录供复盘和给厂家反馈」、09 中「按反馈补知识库」相互衔接。</p>
   </div>
 
   <div class="card">
@@ -559,9 +663,9 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 
   <div class="card">
-    <h3>🆚 与 02「使用场景」相比，本章新增 / 细化的点</h3>
+    <h3>🆚 与 03「使用场景」相比，本章新增 / 细化的点</h3>
     <div class="tbl"><table>
-      <thead><tr><th>环节</th><th>02 概念定义中的描述</th><th>03 用户端作业流程中的细化</th></tr></thead>
+      <thead><tr><th>环节</th><th>03 概念定义中的描述</th><th>04 用户端作业流程中的细化</th></tr></thead>
       <tbody>
         <tr><td>识别</td><td>摄像头看到设备，采集型号</td><td>对着坏设备<b>拍照</b>，识别<b>型号和序列号</b></td></tr>
         <tr><td>检索</td><td>根据经验库指导；知识库转向量库，大模型指导</td><td>去向量库检索说明书和维修手册，找到<b>最匹配的段落</b>，<b>每步引用标出来源</b></td></tr>
@@ -580,15 +684,15 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
       <li><input type="checkbox" id="qw-3"><label for="qw-3">爆炸图从哪里来：手册自带、人工绘制，还是其他方式？力矩数据手册里没有时怎么处理？</label></li>
       <li><input type="checkbox" id="qw-4"><label for="qw-4">维修记录反哺知识库之前，是否需要人工审核，避免错误经验进入知识库？</label></li>
       <li><input type="checkbox" id="qw-5"><label for="qw-5">「发现不对就纠正」依据什么判断？判断不准时如何与「不确定就说不确定」的原则衔接？</label></li>
-      <li><input type="checkbox" id="qw-6"><label for="qw-6">MVP（04 原型验证）要覆盖这 9 步中的哪些，哪些可以后置？<span class="tag t-sug">建议</span></label></li>
+      <li><input type="checkbox" id="qw-6"><label for="qw-6">MVP（05 原型验证）要覆盖这 9 步中的哪些，哪些可以后置？<span class="tag t-sug">建议</span></label></li>
     </ol>
   </div>
 </section>
 
-<!-- ================= 04 原型验证 (原 03) ================= -->
+<!-- ================= 05 原型验证 ================= -->
 <section id="s3" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c3)">04</div>
+    <div class="sec-no" style="background:var(--c3)">05</div>
     <h2><span class="en">PROTOTYPE VALIDATION</span>原型验证</h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c3)">做<b>最小可用版（MVP）</b>：只选<b>一条最简单的设备</b>，把「识别型号 → 修好」全流程跑通，用<b>现成样机</b>测试。</div>
@@ -604,7 +708,7 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 
   <div class="grid g3">
-    <div class="card"><h3>🎯 范围 <span class="tag t-ok">已确认</span></h3>
+    <div class="card"><h3>🎯 MVP 范围 <span class="tag t-ok">已确认</span></h3>
       <ul><li>聚焦<b>一条最简单的设备</b></li><li>候选：<b>路由器</b> 或 <b>电源适配器</b></li></ul></div>
     <div class="card"><h3>🔁 流程 <span class="tag t-ok">已确认</span></h3>
       <p>从<b>识别型号</b>到<b>修好</b>，<b>全流程跑通</b>，覆盖型号识别、语音问诊、可视化拆解指导三个核心功能。</p></div>
@@ -638,11 +742,11 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<!-- ================= 04 ================= -->
+<!-- ================= 05 ================= -->
 <section id="s4" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c4)">05</div>
-    <h2><span class="en">DEVELOPMENT</span>开发</h2>
+    <div class="sec-no" style="background:var(--c4)">06</div>
+    <h2><span class="en">DEVELOPMENT</span>开发（黑盒）</h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c4)"><b>全部自研</b>。本框架中开发阶段<b>当黑盒处理</b>，重点放在<b>上线运营</b>。</div>
 
@@ -668,13 +772,13 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<!-- ================= 06 技术实现 (NEW) ================= -->
+<!-- ================= 07 技术实现 ================= -->
 <section id="tech" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c8)">06</div>
+    <div class="sec-no" style="background:var(--c8)">07</div>
     <h2><span class="en">TECHNICAL IMPLEMENTATION</span>技术实现 <span class="tag newtag" style="background:var(--c8-soft);color:var(--c8)">v2 新增</span></h2>
   </div>
-  <div class="one-line" style="border-left-color:var(--c8)">「05 开发」保持黑盒不变；本章单独记录已讨论的<b>技术实现方向</b>：跨平台应用端 + <b>API 服务 / 向量数据库</b>后端 + <b>RAG 大模型层（每步挂原文出处）</b>，应用走<b>应用商店</b>、后端<b>容器化</b>。</div>
+  <div class="one-line" style="border-left-color:var(--c8)">「06 开发」保持黑盒不变；本章单独记录已讨论的<b>技术实现方向</b>：跨平台应用端 + <b>API 服务 / 向量数据库</b>后端 + <b>RAG 大模型层（每步挂原文出处）</b>，应用走<b>应用商店</b>、后端<b>容器化</b>。</div>
 
   <div class="card">
     <h3>🏗️ 分层架构 <span class="tag t-ok">已确认</span></h3>
@@ -723,35 +827,35 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
       <div class="p"><b>文档解析</b>拆出可检索的段落</div>
       <div class="p"><b>向量化</b>段落转为向量</div>
       <div class="p"><b>向量数据库</b>入库，供检索</div>
-      <div class="p fb"><b>维修记录反哺</b>见 03，回流知识库</div>
+      <div class="p fb"><b>维修记录反哺</b>见 04，回流知识库</div>
     </div>
-    <p class="muted small" style="margin-top:10px">「文档解析 → 向量化 → 向量数据库」为已确认内容；各环节的说明文字，以及把「维修记录反哺」画进管道（衔接 03 章），是整理时的示意。<span class="tag t-sug">建议</span></p>
+    <p class="muted small" style="margin-top:10px">「文档解析 → 向量化 → 向量数据库」为已确认内容；各环节的说明文字，以及把「维修记录反哺」画进管道（衔接 04 章），是整理时的示意。<span class="tag t-sug">建议</span></p>
   </div>
 
   <div class="card">
     <h3>🔁 一次请求的流转 <span class="tag t-sug">示意</span></h3>
-    <p class="muted small">用已确认的组件把 03「用户端作业流程」串起来；具体调用顺序和接口划分待开发确认。</p>
+    <p class="muted small">用已确认的组件把 04「用户端作业流程」串起来；具体调用顺序和接口划分待开发确认。</p>
     <ol class="rq">
-      <li><span class="who">应用端</span><span class="what">通过<b>系统 API</b> 调用摄像头拍照，识别型号和序列号（03 · 步骤 2）</span></li>
-      <li><span class="who">应用端</span><span class="what"><b>实时语音识别</b>把用户的故障描述转成文字（03 · 步骤 3）</span></li>
-      <li><span class="who">后端</span><span class="what"><b>API 服务</b>接收请求，到<b>向量数据库</b>检索最匹配的说明书 / 维修手册段落（03 · 步骤 4）</span></li>
-      <li><span class="who">大模型层</span><span class="what"><b>RAG</b> 基于检索结果生成维修步骤，<b>每步回答挂原文出处</b>（03 · 步骤 5）</span></li>
+      <li><span class="who">应用端</span><span class="what">通过<b>系统 API</b> 调用摄像头拍照，识别型号和序列号（04 · 步骤 2）</span></li>
+      <li><span class="who">应用端</span><span class="what"><b>实时语音识别</b>把用户的故障描述转成文字（04 · 步骤 3）</span></li>
+      <li><span class="who">后端</span><span class="what"><b>API 服务</b>接收请求，到<b>向量数据库</b>检索最匹配的说明书 / 维修手册段落（04 · 步骤 4）</span></li>
+      <li><span class="who">大模型层</span><span class="what"><b>RAG</b> 基于检索结果生成维修步骤，<b>每步回答挂原文出处</b>（04 · 步骤 5）</span></li>
       <li><span class="who">应用端</span><span class="what">展示步骤与出处，并用<b>语音合成</b>播报</span></li>
-      <li class="vis"><span class="who">视觉引导</span><span class="what">摄像头画面经<b>大模型多模态接口</b>判断操作是否正确，不对就纠正（03 · 步骤 6–8）</span></li>
-      <li><span class="who">后端</span><span class="what">生成维修记录，存进产品库，并反哺知识库（03 · 步骤 9 → 入库管道）</span></li>
+      <li class="vis"><span class="who">视觉引导</span><span class="what">摄像头画面经<b>大模型多模态接口</b>判断操作是否正确，不对就纠正（04 · 步骤 6–8）</span></li>
+      <li><span class="who">后端</span><span class="what">生成维修记录，存进产品库，并反哺知识库（04 · 步骤 9 → 入库管道）</span></li>
     </ol>
   </div>
 
   <div class="card">
     <h3>🔗 技术组件与产品能力对照</h3>
     <div class="tbl"><table>
-      <thead><tr><th>产品能力（02 / 03）</th><th>对应技术组件（已确认）</th></tr></thead>
+      <thead><tr><th>产品能力（03 / 04）</th><th>对应技术组件（已确认）</th></tr></thead>
       <tbody>
         <tr><td>型号识别 / 拍照</td><td>摄像头调用走系统 API</td></tr>
         <tr><td>语音问诊</td><td>实时语音识别 + 语音合成</td></tr>
         <tr><td>可视化拆解指导 / 实时纠正</td><td>视觉引导：大模型多模态接口</td></tr>
         <tr><td>可靠知识库 + 每步可追溯到原文</td><td>文档解析和向量化管道 → 向量数据库 → RAG，每步回答挂原文出处</td></tr>
-        <tr><td>上线给固定客户试用（07）</td><td>应用走应用商店；后端容器化</td></tr>
+        <tr><td>上线给固定客户试用（08）</td><td>应用走应用商店；后端容器化</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -769,10 +873,10 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<!-- ================= 07 上线运营 (原 05) ================= -->
+<!-- ================= 08 上线运营 ================= -->
 <section id="s5" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c5)">07</div>
+    <div class="sec-no" style="background:var(--c5)">08</div>
     <h2><span class="en">LAUNCH &amp; OPERATIONS</span>上线运营</h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c5)">第一批用户是<b>固定客户</b>：<b>直接给试用</b>，并<b>收集反馈</b>。</div>
@@ -788,10 +892,10 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
     <div class="tbl"><table>
       <thead><tr><th>维度</th><th>可以问 / 可以看的</th><th>流向</th></tr></thead>
       <tbody>
-        <tr><td>知识覆盖</td><td>遇到哪些型号 / 故障助手答不上或说“不确定”</td><td>→ 08 补知识库</td></tr>
-        <tr><td>引导效果</td><td>哪一步看不懂、拆解指导哪里不清楚</td><td>→ 08 改进引导</td></tr>
-        <tr><td>识别与语音</td><td>型号识别、语音沟通在现场是否好用</td><td>→ 08 改进引导</td></tr>
-        <tr><td>付费意愿</td><td>试用后是否愿意订阅</td><td>→ 01 订阅设计</td></tr>
+        <tr><td>知识覆盖</td><td>遇到哪些型号 / 故障助手答不上或说“不确定”</td><td>→ 09 补知识库</td></tr>
+        <tr><td>引导效果</td><td>哪一步看不懂、拆解指导哪里不清楚</td><td>→ 09 改进引导</td></tr>
+        <tr><td>识别与语音</td><td>型号识别、语音沟通在现场是否好用</td><td>→ 09 改进引导</td></tr>
+        <tr><td>付费意愿</td><td>试用后是否愿意订阅</td><td>→ 02 订阅设计</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -807,10 +911,10 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   </div>
 </section>
 
-<!-- ================= 06 ================= -->
+<!-- ================= 07 ================= -->
 <section id="s6" data-sec>
   <div class="sec-head">
-    <div class="sec-no" style="background:var(--c6)">08</div>
+    <div class="sec-no" style="background:var(--c6)">09</div>
     <h2><span class="en">ITERATION</span>迭代优化</h2>
   </div>
   <div class="one-line" style="border-left-color:var(--c6)">根据试用反馈<b>不断补知识库</b>、<b>改进引导效果</b>。</div>
@@ -829,7 +933,7 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   <div class="grid g2">
     <div class="card"><h3>📚 补知识库 <span class="tag t-ok">已确认</span></h3>
       <ul>
-        <li>知识库本就是<b>逐步添加</b>的（见 02）；维修记录也会<b>反哺知识库</b>（见 03）</li>
+        <li>知识库本就是<b>逐步添加</b>的（见 03）；维修记录也会<b>反哺知识库</b>（见 04）</li>
         <li>反馈中暴露的缺口 → 补资料 → 转入向量库</li>
         <li class="muted small">AI 说“不确定”的记录可作为补库线索 <span class="tag t-sug">建议</span></li>
       </ul></div>
@@ -846,7 +950,6 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
       <li><input type="checkbox" id="q6-1"><label for="q6-1">补知识库的优先级怎么排：按反馈频次、客户重要性，还是设备品类？</label></li>
       <li><input type="checkbox" id="q6-2"><label for="q6-2">用什么来衡量“引导效果变好了”（例如沿用 MVP 验收标准复测）？</label></li>
       <li><input type="checkbox" id="q6-3"><label for="q6-3">迭代节奏：多久发一次版本 / 更新一次知识库？</label></li>
-      <li><input type="checkbox" id="q6-4"><label for="q6-4">何时从 MVP 的单一设备扩展到更多设备品类？扩展的判断条件是什么？</label></li>
     </ol>
   </div>
 </section>
@@ -861,16 +964,17 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
   <div class="card">
     <h3>✅ 已确认要点一览</h3>
     <div class="tbl"><table class="summary-tbl">
-      <thead><tr><th>阶段</th><th>已确认内容</th></tr></thead>
+      <thead><tr><th>章节</th><th>已确认内容</th></tr></thead>
       <tbody>
-        <tr><td><a href="#s1">01 需求洞察</a></td><td>目标用户：保外设备的一线维修技术人员；需求：过保后的维修步骤指引和排障帮助；现状：靠师傅口口相传和网上搜索，信息零散、真假难辨；付费：订阅。</td></tr>
-        <tr><td><a href="#s2">02 概念定义</a></td><td>应用（非小程序）、AI 辅助；场景：摄像头看设备采集型号 → 语音沟通问题 → 按经验库指导 → 可视化教拆解与检查 → 视觉反馈逐步指导直到修好；知识库：说明书、维修手册等逐步添加，转向量库，大模型指导；核心功能：型号识别、语音问诊、可视化拆解指导；差异化：可靠知识库 + 每步可追溯原文、不确定就说不确定不瞎猜、维修记录存档供复盘和给厂家反馈。</td></tr>
-        <tr><td><a href="#workflow">03 用户端作业流程</a></td><td>打开应用 → 对着坏设备拍照，识别型号和序列号 → 语音描述故障现象 → 助手在向量库检索相关说明书和维修手册，找到最匹配段落，每步引用标出来源 → 可视化教拆解（爆炸图标螺丝位置和力矩），摄像头实时看操作、不对就纠正 → 一步一步直到设备恢复正常 → 生成维修记录，存进产品库，也反哺知识库。</td></tr>
-        <tr><td><a href="#s3">04 原型验证</a></td><td>MVP 聚焦一条最简单设备（如路由器或电源适配器），从识别型号到修好全流程跑通，用现成样机测试；验收：技师不看说明书、只靠应用能独立完成一次维修。</td></tr>
-        <tr><td><a href="#s4">05 开发</a></td><td>全部自研；开发阶段当黑盒处理，重点在上线运营。</td></tr>
-        <tr><td><a href="#tech">06 技术实现</a></td><td>应用端：跨平台框架，摄像头调用走系统 API，语音用实时语音识别加合成，视觉引导用大模型多模态接口；后端：API 服务 + 向量数据库，知识入库用文档解析和向量化管道；大模型层：检索增强生成（RAG），每步回答都挂原文出处；部署：应用走应用商店，后端容器化。</td></tr>
-        <tr><td><a href="#s5">07 上线运营</a></td><td>第一批用户是固定客户，直接给试用并收集反馈。</td></tr>
-        <tr><td><a href="#s6">08 迭代优化</a></td><td>根据试用反馈不断补知识库、改进引导效果。</td></tr>
+        <tr><td><a href="#persona">01 用户画像</a></td><td>目标用户：保外设备的一线维修技术人员；现状：靠师傅口口相传和网上搜索，信息零散、真假难辨。</td></tr>
+        <tr><td><a href="#s1">02 需求洞察</a></td><td>需求：过保后的维修步骤指引和排障帮助；付费：订阅；技师访谈已完成，方向、痛点和付费意愿已确认。</td></tr>
+        <tr><td><a href="#s2">03 概念定义</a></td><td>范围：前期（收敛）只做电子手持设备的保外维修，超出厂方免费保修期的都算保外；后期愿景为全生命周期辅助，覆盖生产、组装和维修，设备扩展到所有需要组装的电子设备，小到仪器仪表，大到汽车、飞机、火箭。形态：应用（非小程序）、AI 辅助；场景：摄像头看设备采集型号 → 语音沟通问题 → 按经验库指导 → 可视化教拆解与检查 → 视觉反馈逐步指导直到修好；知识库：说明书、维修手册等逐步添加，转向量库，大模型指导；核心功能：型号识别、语音问诊、可视化拆解指导；差异化：可靠知识库 + 每步可追溯原文、不确定就说不确定不瞎猜、维修记录存档供复盘和给厂家反馈。</td></tr>
+        <tr><td><a href="#workflow">04 用户端作业流程</a></td><td>打开应用 → 对着坏设备拍照，识别型号和序列号 → 语音描述故障现象 → 助手在向量库检索相关说明书和维修手册，找到最匹配段落，每步引用标出来源 → 可视化教拆解（爆炸图标螺丝位置和力矩），摄像头实时看操作、不对就纠正 → 一步一步直到设备恢复正常 → 生成维修记录，存进产品库，也反哺知识库。</td></tr>
+        <tr><td><a href="#s3">05 原型验证</a></td><td>MVP 聚焦一条最简单设备（如路由器或电源适配器），从识别型号到修好全流程跑通，用现成样机测试；验收：技师不看说明书、只靠应用能独立完成一次维修。</td></tr>
+        <tr><td><a href="#s4">06 开发（黑盒）</a></td><td>全部自研；开发阶段当黑盒处理，重点在上线运营。</td></tr>
+        <tr><td><a href="#tech">07 技术实现</a></td><td>应用端：跨平台框架，摄像头调用走系统 API，语音用实时语音识别加合成，视觉引导用大模型多模态接口；后端：API 服务 + 向量数据库，知识入库用文档解析和向量化管道；大模型层：检索增强生成（RAG），每步回答都挂原文出处；部署：应用走应用商店，后端容器化。</td></tr>
+        <tr><td><a href="#s5">08 上线运营</a></td><td>第一批用户是固定客户，直接给试用并收集反馈。</td></tr>
+        <tr><td><a href="#s6">09 迭代优化</a></td><td>根据试用反馈不断补知识库、改进引导效果。</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -881,18 +985,18 @@ footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:v
     <div class="tbl"><table>
       <thead><tr><th>#</th><th>问题</th><th>影响阶段</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td>MVP 选路由器还是电源适配器，具体哪个型号</td><td><a href="#s3">04</a></td></tr>
-        <tr><td>2</td><td>MVP 知识库资料的来源与授权</td><td><a href="#s2">02</a> / <a href="#s3">04</a></td></tr>
-        <tr><td>3</td><td>AI “不确定”时的后续处理方式</td><td><a href="#s2">02</a></td></tr>
-        <tr><td>4</td><td>首批固定客户名单、试用期与反馈渠道</td><td><a href="#s5">07</a></td></tr>
-        <tr><td>5</td><td>订阅付费主体、定价与周期</td><td><a href="#s1">01</a></td></tr>
+        <tr><td>1</td><td>MVP 选路由器还是电源适配器，具体哪个型号</td><td><a href="#s3">05</a></td></tr>
+        <tr><td>2</td><td>MVP 知识库资料的来源与授权</td><td><a href="#s2">03</a> / <a href="#s3">05</a></td></tr>
+        <tr><td>3</td><td>AI “不确定”时的后续处理方式</td><td><a href="#s2">03</a></td></tr>
+        <tr><td>4</td><td>首批固定客户名单、试用期与反馈渠道</td><td><a href="#s5">08</a></td></tr>
+        <tr><td>5</td><td>订阅付费主体、定价与周期</td><td><a href="#s1">02</a></td></tr>
       </tbody>
     </table></div>
   </div>
 </section>
 
 <footer>
-  《维修助手 · 产品生命周期框架》讨论稿 v2 · 2026-09-29 · 根据通话讨论内容整理。<br>
+  《维修助手 · 产品生命周期框架》讨论稿 v3 · 2026-09-29 · 根据通话讨论内容整理。<br>
   标注 <span class="tag t-ok">已确认</span> 的内容来自讨论；标注 <span class="tag t-sug">建议</span> / <span class="tag t-q">待确认</span> 的内容为整理时补充，均未决策。
 </footer>
 </main>
