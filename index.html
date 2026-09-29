@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>维修助手 · 产品生命周期框架</title>
+<meta name="description" content="维修助手（AI 维修助手应用）产品生命周期框架讨论稿：需求洞察、概念定义、原型验证、开发、上线运营、迭代优化。">
+<style>
+:root{
+  --bg:#f6f7fb; --card:#ffffff; --ink:#1f2433; --muted:#667085; --line:#e4e7ec;
+  --brand:#2f6bff; --brand-2:#14b8a6; --brand-soft:#eaf1ff; --warn:#f59e0b; --warn-soft:#fff6e5;
+  --ok:#12a150; --ok-soft:#e8f7ee; --violet:#7c3aed; --violet-soft:#f3edff;
+  --c1:#2f6bff; --c2:#7c3aed; --c3:#0ea5e9; --c4:#64748b; --c5:#12a150; --c6:#f97316;
+  --radius:14px; --nav-w:250px; --shadow:0 1px 2px rgba(16,24,40,.05),0 4px 16px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC","WenQuanYi Micro Hei","Segoe UI",Roboto,sans-serif;
+  line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:var(--brand);text-decoration:none}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--brand),var(--brand-2));z-index:60;transition:width .1s}
+
+/* ---------- side nav ---------- */
+.side{position:fixed;top:0;left:0;bottom:0;width:var(--nav-w);background:#0f172a;color:#cbd5e1;padding:26px 16px;overflow-y:auto;z-index:50}
+.side .logo{display:flex;gap:10px;align-items:center;color:#fff;font-weight:700;font-size:17px;margin:0 6px 4px}
+.side .logo i{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--brand-2));font-style:normal;font-size:17px}
+.side .sub{font-size:12px;color:#94a3b8;margin:0 6px 20px}
+.side nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;color:#cbd5e1;font-size:14.5px;margin-bottom:3px;border-left:3px solid transparent;transition:.15s}
+.side nav a .n{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#64748b;min-width:22px}
+.side nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.side nav a.active{background:rgba(47,107,255,.18);color:#fff;border-left-color:var(--brand)}
+.side nav a.active .n{color:#93b4ff}
+.side nav .grp{font-size:11px;letter-spacing:.12em;color:#64748b;margin:18px 10px 6px}
+.side .legend{margin:22px 6px 0;padding-top:16px;border-top:1px solid #1e293b;font-size:12px;color:#94a3b8}
+.side .legend div{margin:6px 0;display:flex;align-items:center;gap:8px}
+
+/* mobile top bar */
+.topbar{display:none;position:sticky;top:0;z-index:55;background:#0f172a;color:#fff;padding:10px 14px;align-items:center;justify-content:space-between}
+.topbar b{font-size:15px}
+.topbar button{background:rgba(255,255,255,.1);border:0;color:#fff;border-radius:8px;padding:6px 12px;font-size:14px;cursor:pointer}
+.chips{display:none;position:sticky;top:46px;z-index:54;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;padding:8px 10px;-webkit-overflow-scrolling:touch}
+.chips a{display:inline-block;padding:4px 11px;margin-right:6px;border-radius:999px;background:var(--bg);color:var(--ink);font-size:13px;border:1px solid var(--line)}
+.chips a.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ---------- main ---------- */
+main{margin-left:var(--nav-w);padding:34px 44px 80px;max-width:calc(var(--nav-w) + 1080px)}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 55%,#0f766e 100%);color:#fff;border-radius:20px;padding:36px 38px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero:after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.14),transparent 70%)}
+.hero .kicker{font-size:13px;letter-spacing:.14em;color:#a5c0ff}
+.hero h1{margin:6px 0 10px;font-size:34px;line-height:1.3;letter-spacing:.02em}
+.hero p{margin:0;color:#dbe4ff;max-width:760px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.meta span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:3px 12px;border-radius:999px;font-size:13px}
+
+section{margin-top:40px}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.sec-no{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:700;font-size:15px;color:#fff;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;box-shadow:var(--shadow)}
+.sec-head h2{margin:0;font-size:25px;line-height:1.3}
+.sec-head .en{display:block;font-size:12px;color:var(--muted);letter-spacing:.14em;font-weight:500}
+.one-line{background:var(--card);border-radius:var(--radius);padding:14px 18px;border-left:4px solid var(--brand);box-shadow:var(--shadow);margin-bottom:16px;font-size:16.5px}
+.one-line b{color:var(--brand)}
+.card{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h3{margin:0 0 10px;font-size:18px;display:flex;align-items:center;gap:8px}
+.card h4{margin:14px 0 6px;font-size:15.5px}
+.card p{margin:6px 0}
+.card ul{margin:6px 0;padding-left:20px}
+.card li{margin:4px 0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid>.card{margin-bottom:0}
+.muted{color:var(--muted)}
+.small{font-size:13.5px}
+
+.tag{display:inline-block;font-size:12px;line-height:1;padding:5px 8px;border-radius:6px;font-weight:600;vertical-align:middle;white-space:nowrap}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-sug{background:var(--warn-soft);color:#b45309}
+.t-q{background:var(--violet-soft);color:var(--violet)}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* overview flow */
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:4px;counter-reset:st}
+.flow a{position:relative;display:block;background:var(--card);border-radius:14px;padding:14px 14px 14px;color:var(--ink);box-shadow:var(--shadow);border-top:4px solid var(--c);transition:transform .15s}
+.flow a:hover{transform:translateY(-3px)}
+.flow a .no{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--c);font-weight:700}
+.flow a .t{font-weight:700;font-size:16px;margin:2px 0 6px}
+.flow a .d{font-size:13px;color:var(--muted);line-height:1.6}
+.flow a:not(:last-child):not(:nth-child(4)):after{content:"";position:absolute;right:-9px;top:50%;width:8px;height:8px;border-top:2px solid #98a2b3;border-right:2px solid #98a2b3;transform:translateY(-50%) rotate(45deg);z-index:2}
+.loopnote{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.loopnote .lp{grid-column:3/5;margin:0 16% 0;height:18px;border:2px dashed #fb923c;border-top:0;border-radius:0 0 12px 12px;position:relative;text-align:center}
+.loopnote .lp:before{content:"";position:absolute;left:-7px;top:-2px;border:6px solid transparent;border-bottom:9px solid #fb923c;border-top:0}
+.loopnote .lp span{position:absolute;right:0;top:14px;background:var(--bg);padding:0 0 0 8px;font-size:12.5px;color:#c2410c;white-space:nowrap}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:30px}
+.fact{background:var(--card);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.fact .k{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.fact .v{font-weight:600;font-size:15px;margin-top:2px;line-height:1.55}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#f9fafb;font-weight:600;color:#344054;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+
+/* scenario steps */
+.steps{list-style:none;margin:6px 0 0;padding:0;position:relative}
+.steps li{position:relative;padding:0 0 18px 64px;min-height:56px}
+.steps li:before{content:"";position:absolute;left:23px;top:46px;bottom:0;width:2px;background:linear-gradient(var(--c2),#d9ccff)}
+.steps li:last-child:before{display:none}
+.steps .ic{position:absolute;left:0;top:0;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--violet-soft);border:1px solid #e1d5ff}
+.steps .st{font-size:12px;color:var(--c2);font-weight:700;letter-spacing:.08em}
+.steps .tt{font-weight:700;font-size:16px}
+.steps .dd{color:#475467;font-size:14.5px}
+.loop-badge{display:inline-block;margin-top:4px;font-size:12.5px;background:#f5f3ff;color:var(--violet);border:1px dashed #c4b5fd;padding:2px 8px;border-radius:6px}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:8px}
+.pipe .p{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-size:13.5px;position:relative;line-height:1.55}
+.pipe .p b{display:block;font-size:15px;margin-bottom:4px;color:var(--c2)}
+.pipe .p:not(:last-child):after{content:"→";position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:#98a2b3;font-weight:700;width:14px;text-align:center}
+@media (max-width:1250px) and (min-width:901px){.pipe{grid-template-columns:repeat(2,minmax(0,1fr))}.pipe .p:nth-child(2):after{display:none}}
+.feat{border-top:4px solid var(--c)}
+.feat .big{font-size:26px}
+
+/* acceptance box */
+.accept{border:2px solid var(--ok);background:linear-gradient(180deg,#f2fbf5,#fff);border-radius:16px;padding:22px 24px;margin-bottom:16px;position:relative}
+.accept .lbl{position:absolute;top:-13px;left:18px;background:var(--ok);color:#fff;font-size:13px;font-weight:700;padding:3px 12px;border-radius:999px}
+.accept .q{font-size:21px;font-weight:700;line-height:1.5;margin:4px 0 12px}
+.accept .q em{font-style:normal;color:var(--ok);background:#dcf5e6;padding:0 4px;border-radius:4px}
+.checks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.checks div{background:#fff;border:1px solid #c9ecd6;border-radius:10px;padding:10px 12px;font-size:14.5px}
+.checks div b{color:var(--ok)}
+
+/* blackbox */
+.bb{display:grid;grid-template-columns:1fr auto 1.2fr auto 1fr;align-items:center;gap:10px;margin:8px 0}
+.bb .io{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px}
+.bb .box{background:#111827;color:#e5e7eb;border-radius:14px;padding:18px;text-align:center}
+.bb .box b{display:block;font-size:17px;color:#fff}
+.bb .ar{color:#98a2b3;font-size:22px;font-weight:700}
+
+/* loop */
+.loop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;position:relative}
+.loop div{background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:12px;text-align:center;font-size:14.5px;position:relative}
+.loop div b{display:block;color:#c2410c}
+.loop div:not(:last-child):after{content:"→";position:absolute;right:-11px;top:50%;transform:translateY(-50%);color:#fb923c;font-weight:700}
+.loopback{font-size:13px;color:#c2410c;text-align:center;margin-top:8px}
+
+/* discussion */
+.disc{background:#fff;border:1px dashed #c4b5fd;border-radius:var(--radius);padding:16px 20px;margin-bottom:6px}
+.disc h3{margin:0 0 8px;font-size:16.5px;color:var(--violet);display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.disc h3 small{font-weight:400;color:var(--muted);font-size:12.5px}
+.disc ol{margin:0;padding-left:0;list-style:none;counter-reset:q}
+.disc li{counter-increment:q;display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f1ecff;font-size:15px}
+.disc li:last-child{border-bottom:0}
+.disc li:before{content:"Q" counter(q);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;font-weight:700;color:var(--violet);background:var(--violet-soft);border-radius:6px;padding:2px 6px;margin-top:3px;flex:none}
+.disc li label{flex:1;cursor:pointer}
+.disc li input{margin-top:6px;accent-color:var(--violet);flex:none;width:16px;height:16px}
+.disc li.done label{color:#98a2b3;text-decoration:line-through}
+
+.summary-tbl td:first-child{white-space:nowrap;font-weight:600}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.tools button{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:5px 12px;font-size:13px;cursor:pointer}
+.tools button:hover{background:rgba(255,255,255,.2)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1100px){
+  .flow a .d{font-size:12.5px}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .loopnote{display:block;margin-top:10px}.loopnote .lp{border:0;height:auto;margin:0}.loopnote .lp:before{display:none}.loopnote .lp span{top:0;position:static}
+}
+@media (max-width:900px){
+  .side{transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 40px rgba(0,0,0,.4)}
+  body.nav-open .side{transform:none}
+  .topbar{display:flex}
+  .chips{display:block}
+  main{margin-left:0;padding:18px 14px 60px}
+  html{scroll-padding-top:100px}
+  .hero{padding:24px 20px;border-radius:16px}
+  .hero h1{font-size:25px}
+  .g2,.g3,.checks{grid-template-columns:1fr}
+  .flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .flow a:after{display:none}
+  .bb{grid-template-columns:1fr}
+  .bb .ar{transform:rotate(90deg);text-align:center}
+  .loop{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .loop div:after{display:none}
+  .sec-head h2{font-size:21px}
+  .accept .q{font-size:18px}
+}
+@media (max-width:420px){ .facts{grid-template-columns:1fr} }
+
+/* ---------- print ---------- */
+@media print{
+  @page{size:A4;margin:14mm 12mm}
+  body{background:#fff;font-size:12pt}
+  .side,.topbar,.chips,#progress,.tools,.disc input{display:none!important}
+  main{margin:0;padding:0;max-width:none}
+  .hero{background:#fff!important;color:#000;border:2px solid #1e3a8a;box-shadow:none}
+  .hero p,.hero .kicker{color:#333}
+  .meta span{border-color:#999;background:#fff;color:#000}
+  .card,.fact,.flow a,.one-line{box-shadow:none;border:1px solid #ccc}
+  section{break-inside:auto;page-break-before:auto}
+  .card,.accept,.disc,.flow a,.steps li,table{break-inside:avoid}
+  .sec-head{break-after:avoid}
+  a{color:#000}
+  .flow a:after,.loop div:after{display:none}
+  .disc li.done label{text-decoration:none;color:#000}
+}
+
+/* ===== user workflow chapter ===== */
+:root{--c7:#0d9488;--c7-soft:#e6f7f5}
+.wf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:6px}
+.wf-ph{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 14px 10px;border-top:4px solid var(--c7);position:relative}
+.wf-ph:not(:last-child):after{content:"";position:absolute;right:-12px;top:26px;width:9px;height:9px;border-top:2px solid #98a2b3;border-right:2px solid #98a2b3;transform:rotate(45deg)}
+.wf-ph .ph{font-size:12px;letter-spacing:.1em;color:var(--c7);font-weight:700}
+.wf-ph .pt{font-weight:700;font-size:16px;margin:0 0 8px}
+.wf-st{display:flex;gap:10px;align-items:flex-start;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px}
+.wf-st .k{flex:none;width:26px;height:26px;border-radius:50%;background:var(--c7);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;font-family:ui-monospace,Menlo,Consolas,monospace}
+.wf-st .x b{display:block;font-size:14.5px;line-height:1.45}
+.wf-st .x span{font-size:13px;color:#475467;line-height:1.55;display:block;margin-top:2px}
+.wf-st.loopy{border-style:dashed;border-color:#99e0d8;background:var(--c7-soft)}
+.wf-st.rec{border-color:#fdba74;background:#fff7ed}
+.wf-st.rec .k{background:#f97316}
+.cite{display:inline-block;margin-top:5px;font-size:12px;background:#fff;border:1px solid #cbd5e1;border-left:3px solid var(--c7);border-radius:6px;padding:1px 7px;color:#334155}
+
+.df{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-top:10px}
+.df .nd{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;font-size:13px;position:relative;line-height:1.5}
+.df .nd b{display:block;font-size:14.5px;color:var(--ink)}
+.df .nd.kb{background:var(--c7-soft);border-color:#99e0d8}
+.df .nd.rc{background:#fff7ed;border-color:#fdba74}
+.df .nd:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:#98a2b3;font-weight:700;width:12px;text-align:center}
+.df-loop{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.df-loop .lp{grid-column:2/7;height:22px;margin:0 10%;border:2px dashed #f97316;border-top:0;border-radius:0 0 12px 12px;position:relative;text-align:center}
+.df-loop .lp:before{content:"";position:absolute;left:-7px;top:-2px;border:6px solid transparent;border-bottom:9px solid #f97316;border-top:0}
+.df-loop .lp span{position:relative;top:14px;background:#fff;padding:0 8px;font-size:12.5px;color:#c2410c;font-weight:600;white-space:nowrap}
+.card p.df-note{margin-top:34px}
+.df-rec2{text-align:right;font-size:12.5px;color:#9a3412;margin-top:4px}
+
+.xv{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:center}
+.xv svg{width:100%;height:auto;max-height:300px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}
+.newtag{background:var(--c7-soft);color:var(--c7)}
+@media (max-width:1100px){.wf{grid-template-columns:repeat(2,minmax(0,1fr))}.wf-ph:nth-child(2):after{display:none}}
+@media (max-width:900px){
+  .wf{grid-template-columns:1fr}.wf-ph:after{display:none}
+  .df{grid-template-columns:1fr 1fr}.df .nd:after{display:none}
+  .df-loop .lp{grid-column:1/-1;border:0;height:auto;margin:0}.df-loop .lp:before{display:none}.df-loop .lp span{top:6px;white-space:normal}
+  .xv{grid-template-columns:1fr}
+}
+@media print{.wf-ph,.wf-st,.df,.xv{break-inside:avoid}.wf-ph{box-shadow:none;border:1px solid #ccc}.wf-ph:after,.df .nd:after{display:none}}
+
+/* ===== tech chapter ===== */
+:root{--c8:#4f46e5;--c8-soft:#eef2ff}
+.arch{display:grid;gap:10px;margin-top:6px}
+.layer{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:stretch}
+.layer .ln{border-radius:12px;color:#fff;font-weight:700;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;font-size:15px;line-height:1.4}
+.layer .ln small{font-weight:500;font-size:11px;opacity:.85;letter-spacing:.08em}
+.layer .lb{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;border:1px dashed var(--lc);background:var(--ls);border-radius:12px;padding:10px}
+.layer .bx{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.55}
+.layer .bx b{display:block;font-size:14.5px;color:var(--ink)}
+.layer .bx .muted{font-size:12.5px}
+.arch-link{text-align:center;color:#98a2b3;font-size:12.5px;line-height:1.2;margin:-2px 0 -2px 132px}
+.pipe2{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-top:8px}
+.pipe2 .p{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-size:13.5px;position:relative;line-height:1.55}
+.pipe2 .p b{display:block;font-size:15px;margin-bottom:3px;color:var(--c8)}
+.pipe2 .p:not(:last-child):after{content:"→";position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:#98a2b3;font-weight:700;width:14px;text-align:center}
+.pipe2 .p.fb{background:#fff7ed;border-color:#fdba74}.pipe2 .p.fb b{color:#c2410c}
+.rq{list-style:none;margin:6px 0 0;padding:0;counter-reset:rq}
+.rq li{counter-increment:rq;display:grid;grid-template-columns:34px 110px 1fr;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.rq li:last-child{border-bottom:0}
+.rq li:before{content:counter(rq);width:28px;height:28px;border-radius:8px;background:var(--c8);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
+.rq .who{font-size:12.5px;font-weight:700;color:var(--c8);background:var(--c8-soft);border-radius:6px;padding:3px 8px;text-align:center}
+.rq li.vis:before{background:#0d9488}.rq li.vis .who{color:#0d9488;background:var(--c7-soft)}
+@media (max-width:900px){
+  .layer{grid-template-columns:1fr}.layer .ln{flex-direction:row;gap:8px;justify-content:flex-start;padding:8px 12px}
+  .arch-link{margin-left:0}
+  .pipe2{grid-template-columns:1fr 1fr}.pipe2 .p:after{display:none}
+  .rq li{grid-template-columns:34px 1fr}.rq li .what{grid-column:2}
+}
+@media print{.layer,.pipe2,.rq li{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<div class="topbar"><b>🔧 维修助手 · 生命周期框架</b><button id="navBtn" aria-label="打开目录">目录</button></div>
+<div class="chips" id="chips">
+  <a href="#overview">总览</a><a href="#s1">01 需求</a><a href="#s2">02 概念</a><a href="#workflow">03 作业流程</a><a href="#s3">04 原型</a><a href="#s4">05 开发</a><a href="#tech">06 技术实现</a><a href="#s5">07 上线</a><a href="#s6">08 迭代</a><a href="#todo">待确认汇总</a>
+</div>
+
+<aside class="side" id="side">
+  <div class="logo"><i>🔧</i>维修助手</div>
+  <div class="sub">产品生命周期框架 · 讨论稿 v2 · 2026-09-29</div>
+  <nav id="nav">
+    <a href="#overview"><span class="n">00</span>总览 · 一页看懂</a>
+    <div class="grp">生命周期框架</div>
+    <a href="#s1"><span class="n">01</span>需求洞察</a>
+    <a href="#s2"><span class="n">02</span>概念定义</a>
+    <a href="#workflow"><span class="n">03</span>用户端作业流程</a>
+    <a href="#s3"><span class="n">04</span>原型验证</a>
+    <a href="#s4"><span class="n">05</span>开发</a>
+    <a href="#tech"><span class="n">06</span>技术实现</a>
+    <a href="#s5"><span class="n">07</span>上线运营</a>
+    <a href="#s6"><span class="n">08</span>迭代优化</a>
+    <div class="grp">讨论用</div>
+    <a href="#todo"><span class="n">★</span>待确认问题汇总</a>
+  </nav>
+  <div class="legend">
+    <div><span class="tag t-ok">已确认</span>通话中已讨论定下</div>
+    <div><span class="tag t-sug">建议</span>整理时补充，待讨论</div>
+    <div><span class="tag t-q">待确认</span>需要拍板的问题</div>
+  </div>
+</aside>
+
+<main>
+<header class="hero" id="top">
+  <div class="kicker">PRODUCT LIFECYCLE FRAMEWORK</div>
+  <h1>《维修助手 · 产品生命周期框架》</h1>
+  <p>面向保外设备一线维修技术人员的 AI 维修助手应用。本页把通话中从头到尾讨论的内容，按「需求洞察 → 概念定义 → 原型验证 → 开发 → 上线运营 → 迭代优化」六个阶段整理成一份完整框架，并单列两个专章：「概念定义」之后的「用户端作业流程」、「开发」之后的「技术实现」，方便对着看、边看边讨论。</p>
+  <div class="meta">
+    <span>📅 2026-09-29</span><span>📝 讨论稿 v2</span><span>🗂 6 个阶段 + 2 个专章</span><span>🔄 v2 · 新增「用户端作业流程」「技术实现」</span><span>🎯 MVP：路由器 / 电源适配器</span>
+  </div>
+  <div class="tools">
+    <button onclick="window.print()">🖨 打印 / 导出 PDF</button>
+    <button id="resetQ">↺ 清除“已讨论”勾选</button>
+  </div>
+</header>
+
+<!-- ================= OVERVIEW ================= -->
+<section id="overview" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:linear-gradient(135deg,#0f172a,#334155)">00</div>
+    <h2><span class="en">OVERVIEW</span>总览 · 一页看懂</h2>
+  </div>
+  <div class="one-line">一句话：<b>给保外设备的一线维修技师，一个“看得见、听得懂、有出处”的 AI 维修助手应用</b>——摄像头识别型号、语音问诊、可视化一步步指导拆解和检查直到修好，按订阅付费。</div>
+
+  <div class="flow">
+    <a href="#s1" style="--c:var(--c1)"><div class="no">01</div><div class="t">需求洞察</div><div class="d">保外设备一线技师；信息零散、真假难辨；订阅付费</div></a>
+    <a href="#s2" style="--c:var(--c2)"><div class="no">02</div><div class="t">概念定义</div><div class="d">AI 辅助应用；型号识别 + 语音问诊 + 可视化拆解指导</div></a>
+    <a href="#workflow" style="--c:var(--c7)"><div class="no">03 · 专章</div><div class="t">用户端作业流程</div><div class="d">拍照识别 → 语音描述 → 检索标来源 → 爆炸图教拆解 → 实时纠正 → 记录反哺</div></a>
+    <a href="#s3" style="--c:var(--c3)"><div class="no">04</div><div class="t">原型验证</div><div class="d">MVP 聚焦一条最简单设备，全流程跑通，样机测试</div></a>
+    <a href="#s4" style="--c:var(--c4)"><div class="no">05</div><div class="t">开发</div><div class="d">全部自研；开发阶段按黑盒处理</div></a>
+    <a href="#tech" style="--c:var(--c8)"><div class="no">06 · 专章</div><div class="t">技术实现</div><div class="d">跨平台应用 + API 服务 / 向量数据库 + RAG 挂原文出处；应用商店 + 容器化</div></a>
+    <a href="#s5" style="--c:var(--c5)"><div class="no">07</div><div class="t">上线运营</div><div class="d">首批用户 = 固定客户，直接试用，收集反馈</div></a>
+    <a href="#s6" style="--c:var(--c6)"><div class="no">08</div><div class="t">迭代优化</div><div class="d">按反馈补知识库、改进引导效果</div></a>
+  </div>
+  <div class="loopnote"><div class="lp"><span>↺ 反馈闭环：试用反馈 → 补知识库 / 改进引导 → 再上线</span></div></div>
+
+  <div class="facts">
+    <div class="fact"><div class="k">目标用户</div><div class="v">保外设备的一线维修技术人员</div></div>
+    <div class="fact"><div class="k">付费形式</div><div class="v">订阅</div></div>
+    <div class="fact"><div class="k">产品形态</div><div class="v">应用（非小程序），AI 辅助</div></div>
+    <div class="fact"><div class="k">核心功能</div><div class="v">型号识别 · 语音问诊 · 可视化拆解指导</div></div>
+    <div class="fact"><div class="k">差异化</div><div class="v">可靠知识库 + 每步可追溯原文；不确定就说不确定；维修记录可复盘</div></div>
+    <div class="fact"><div class="k">MVP 范围</div><div class="v">一条最简单设备（如路由器或电源适配器）全流程</div></div>
+    <div class="fact"><div class="k">MVP 验收</div><div class="v">技师不看说明书、只靠应用独立完成一次维修</div></div>
+    <div class="fact"><div class="k">开发 / 上线</div><div class="v">全部自研（黑盒）；首批给固定客户试用</div></div>
+  </div>
+</section>
+
+<!-- ================= 01 ================= -->
+<section id="s1" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c1)">01</div>
+    <h2><span class="en">NEEDS INSIGHT</span>需求洞察</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c1)">谁在痛、痛在哪、愿不愿意付钱：<b>保外设备的一线维修技师</b>缺少可靠的过保维修指引，愿意以<b>订阅</b>方式付费。</div>
+
+  <div class="grid g3">
+    <div class="card"><h3>👷 目标用户 <span class="tag t-ok">已确认</span></h3>
+      <p><b>保外设备的一线维修技术人员。</b></p>
+      <p class="muted small">设备已过保，原厂支持通常不再覆盖，由一线技师上手处理。</p></div>
+    <div class="card"><h3>🧩 核心需求 <span class="tag t-ok">已确认</span></h3>
+      <ul><li>设备过保后的<b>维修步骤指引</b></li><li>遇到问题时的<b>排障帮助</b></li></ul></div>
+    <div class="card"><h3>💳 付费形式 <span class="tag t-ok">已确认</span></h3>
+      <p><b>订阅制。</b></p>
+      <p class="muted small">具体价格、周期、付费主体尚未讨论（见下方待确认）。</p></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>🔍 现状 vs. 期望</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>维度</th><th>现状（现在怎么做）</th><th>期望（维修助手要给到的）</th></tr></thead>
+      <tbody>
+        <tr><td>信息来源</td><td>靠师傅<b>口口相传</b> + <b>网上搜索</b> <span class="tag t-ok">已确认</span></td><td>统一、可靠的知识库（说明书、维修手册等）</td></tr>
+        <tr><td>信息质量</td><td><b>零散</b>、<b>真假难辨</b> <span class="tag t-ok">已确认</span></td><td>每一步都能追溯到原文出处</td></tr>
+        <tr><td>获取方式</td><td>到处找、问人</td><td>对着设备直接问，边修边指导</td></tr>
+        <tr><td>经验沉淀</td><td>留在个人脑子里 <span class="tag t-sug">建议</span></td><td>维修记录存档，可复盘、可反馈给厂家</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 需求洞察 <small>勾选 = 已讨论（保存在本机浏览器）</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q1-1"><label for="q1-1">订阅由谁付费：技师个人，还是所在的维修店 / 服务公司？</label></li>
+      <li><input type="checkbox" id="q1-2"><label for="q1-2">订阅的定价与周期（按月 / 按年 / 分档）如何设计？</label></li>
+      <li><input type="checkbox" id="q1-3"><label for="q1-3">第一阶段优先覆盖哪些设备品类？“保外设备”的边界怎么划？</label></li>
+      <li><input type="checkbox" id="q1-4"><label for="q1-4">是否需要先对几位一线技师做访谈，确认痛点排序和付费意愿？<span class="tag t-sug">建议</span></label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 02 ================= -->
+<section id="s2" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c2)">02</div>
+    <h2><span class="en">CONCEPT DEFINITION</span>概念定义</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c2)">产品形态是<b>应用（不是小程序）</b>，<b>AI 辅助</b>：看得见设备、听得懂问题、按知识库一步步教到修好。</div>
+
+  <div class="grid g2">
+    <div class="card"><h3>📱 产品形态 <span class="tag t-ok">已确认</span></h3>
+      <ul>
+        <li><b>应用（App）</b>，明确<b>不做小程序</b></li>
+        <li><b>AI 辅助</b>：大模型基于知识库进行指导</li>
+      </ul>
+      <p class="muted small">做成应用的考虑点（摄像头、语音、连续交互等）可在讨论中补充确认。<span class="tag t-sug">建议</span></p>
+    </div>
+    <div class="card"><h3>📚 知识库机制 <span class="tag t-ok">已确认</span></h3>
+      <div class="pipe">
+        <div class="p"><b>资料</b>说明书、维修手册等</div>
+        <div class="p"><b>逐步添加</b>持续扩充</div>
+        <div class="p"><b>向量库</b>转换入库</div>
+        <div class="p"><b>大模型指导</b>检索后回答</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>🎬 使用场景 · 从坏设备到修好 <span class="tag t-ok">已确认</span></h3>
+    <ol class="steps">
+      <li><div class="ic">🔌</div><div class="st">STEP 1</div><div class="tt">用户手上有一台坏设备</div><div class="dd">一线技师接到一台保外故障设备，打开维修助手应用。</div></li>
+      <li><div class="ic">📷</div><div class="st">STEP 2 · 型号识别</div><div class="tt">摄像头看到设备，采集型号</div><div class="dd">通过摄像头拍摄 / 对准设备，识别并采集设备型号。</div></li>
+      <li><div class="ic">🎙️</div><div class="st">STEP 3 · 语音问诊</div><div class="tt">用语音描述问题</div><div class="dd">技师用语音与维修助手沟通，描述故障现象。</div></li>
+      <li><div class="ic">🧠</div><div class="st">STEP 4 · 经验库分析</div><div class="tt">助手根据经验库给出维修指导</div><div class="dd">基于知识库（向量库 + 大模型）判断可能原因和维修路径，每步可追溯到原文。</div></li>
+      <li><div class="ic">🛠️</div><div class="st">STEP 5 · 可视化拆解指导</div><div class="tt">可视化教拆解、教检查</div><div class="dd">在维修过程中以可视化方式指导怎么拆、查哪里。</div></li>
+      <li><div class="ic">👁️</div><div class="st">STEP 6 · 视觉反馈</div><div class="tt">通过视觉反馈逐步指导</div><div class="dd">助手通过摄像头看到当前操作结果，确认后再给下一步。<br><span class="loop-badge">↻ STEP 5 ⇄ STEP 6 循环，直到修好</span></div></li>
+      <li><div class="ic">✅</div><div class="st">STEP 7 · 修好 & 记录</div><div class="tt">设备修好，维修记录存档</div><div class="dd">本次维修过程记录下来，供复盘，也可用于给厂家反馈。</div></li>
+    </ol>
+  </div>
+
+  <h3 style="margin:24px 0 10px;font-size:18px">⚙️ 核心功能 <span class="tag t-ok">已确认</span></h3>
+  <div class="grid g3">
+    <div class="card feat" style="--c:var(--c1)"><div class="big">📷</div><h3>型号识别</h3><p class="small">通过摄像头看到设备并采集型号，作为后续检索知识库的入口。</p></div>
+    <div class="card feat" style="--c:var(--c2)"><div class="big">🎙️</div><h3>语音问诊</h3><p class="small">用语音描述问题、与助手来回沟通，助手结合经验库排障。</p></div>
+    <div class="card feat" style="--c:var(--c3)"><div class="big">🛠️</div><h3>可视化拆解指导</h3><p class="small">可视化教拆解和检查，通过视觉反馈一步步指导直到修好。</p></div>
+  </div>
+
+  <h3 style="margin:24px 0 10px;font-size:18px">⭐ 差异化 <span class="tag t-ok">已确认</span></h3>
+  <div class="tbl" style="background:#fff;margin-bottom:16px">
+    <table>
+      <thead><tr><th>#</th><th>差异化点</th><th>含义</th><th>对应解决的痛点</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>可靠知识库 + 每步可追溯到原文</b></td><td>指导内容来自说明书、维修手册等资料，每一步都能查到原文出处</td><td>网上信息真假难辨</td></tr>
+        <tr><td>2</td><td><b>不确定时宁可说不确定，也不瞎猜</b></td><td>AI 没把握时明确告知，不编造步骤</td><td>错误指导导致误修、返修</td></tr>
+        <tr><td>3</td><td><b>维修记录存下来</b></td><td>用于复盘，也可以给厂家反馈</td><td>经验零散、只靠口口相传</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 概念定义 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q2-1"><label for="q2-1">说明书、维修手册等资料从哪里来？是否涉及版权 / 授权问题？</label></li>
+      <li><input type="checkbox" id="q2-2"><label for="q2-2">AI 说“不确定”之后怎么办：给出参考方向、提示找人，还是记录为知识库缺口？</label></li>
+      <li><input type="checkbox" id="q2-3"><label for="q2-3">型号识别失败（铭牌磨损、看不清）时的兜底方式：手动输入 / 选择？</label></li>
+      <li><input type="checkbox" id="q2-4"><label for="q2-4">“可视化拆解指导”具体用什么形式呈现（画面标注、图示、视频片段等）？</label></li>
+      <li><input type="checkbox" id="q2-5"><label for="q2-5">维修记录给厂家反馈时，需要用户怎样授权？哪些数据可以分享？</label></li>
+      <li><input type="checkbox" id="q2-6"><label for="q2-6">维修现场网络条件不好时，是否需要考虑弱网 / 离线情况？<span class="tag t-sug">建议</span></label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 03 用户端作业流程 (NEW) ================= -->
+<section id="workflow" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c7)">03</div>
+    <h2><span class="en">USER-SIDE WORKFLOW</span>用户端作业流程 <span class="tag newtag">v2 新增</span></h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c7)">从技师打开应用到设备修好的<b>完整作业链路</b>：拍照识别 → 语音描述 → 检索并<b>标注来源</b> → 爆炸图<b>可视化教拆解</b> + 摄像头<b>实时纠正</b> → 修好 → 生成维修记录，<b>存进产品库、反哺知识库</b>。</div>
+
+  <div class="wf">
+    <div class="wf-ph">
+      <div class="ph">阶段 A</div><div class="pt">📷 识别设备</div>
+      <div class="wf-st"><div class="k">1</div><div class="x"><b>打开应用</b><span>用户打开维修助手应用。</span></div></div>
+      <div class="wf-st"><div class="k">2</div><div class="x"><b>对着坏设备拍照</b><span>识别出设备的<b style="display:inline">型号</b>和<b style="display:inline">序列号</b>。</span></div></div>
+    </div>
+    <div class="wf-ph">
+      <div class="ph">阶段 B</div><div class="pt">🎙️ 问诊与检索</div>
+      <div class="wf-st"><div class="k">3</div><div class="x"><b>语音描述故障现象</b><span>用户用语音说明设备出了什么问题。</span></div></div>
+      <div class="wf-st"><div class="k">4</div><div class="x"><b>向量库检索</b><span>助手去向量库里检索相关的说明书和维修手册，找到<b style="display:inline">最匹配的段落</b>。</span></div></div>
+      <div class="wf-st"><div class="k">5</div><div class="x"><b>每步引用标出来源</b><span>给出的每一步都标注出处。</span><span class="cite">📎 来源：说明书 / 维修手册 · 对应段落</span></div></div>
+    </div>
+    <div class="wf-ph">
+      <div class="ph">阶段 C</div><div class="pt">🛠️ 可视化指导维修</div>
+      <div class="wf-st"><div class="k">6</div><div class="x"><b>可视化教拆解</b><span>用<b style="display:inline">爆炸图</b>展示，图上标着<b style="display:inline">螺丝位置</b>和<b style="display:inline">力矩</b>。</span></div></div>
+      <div class="wf-st"><div class="k">7</div><div class="x"><b>摄像头实时看操作</b><span>实时观察用户的操作，<b style="display:inline">发现不对就纠正</b>。</span></div></div>
+      <div class="wf-st loopy"><div class="k">8</div><div class="x"><b>一步一步来</b><span>↻ 6 → 7 循环推进，直到<b style="display:inline">设备恢复正常</b>。</span></div></div>
+    </div>
+    <div class="wf-ph" style="border-top-color:#f97316">
+      <div class="ph" style="color:#ea580c">阶段 D</div><div class="pt">🗂️ 记录与沉淀</div>
+      <div class="wf-st rec"><div class="k">9</div><div class="x"><b>生成维修记录</b><span>维修结束后自动生成本次维修记录。</span></div></div>
+      <div class="wf-st rec"><div class="k">↳</div><div class="x"><b>存进产品库</b><span>维修记录归档到产品库。</span></div></div>
+      <div class="wf-st rec"><div class="k">↺</div><div class="x"><b>反哺知识库</b><span>维修记录回流知识库，供之后的检索使用（见下方闭环）。</span></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>🔄 数据流与反馈闭环 <span class="tag t-ok">已确认</span></h3>
+    <div class="df">
+      <div class="nd"><b>拍照识别</b>型号 + 序列号</div>
+      <div class="nd kb"><b>知识库 / 向量库</b>说明书、维修手册</div>
+      <div class="nd"><b>检索最匹配段落</b>每步引用标来源</div>
+      <div class="nd"><b>爆炸图教拆解</b>螺丝位置 + 力矩</div>
+      <div class="nd"><b>实时纠正</b>直到恢复正常</div>
+      <div class="nd rc"><b>维修记录</b>存进产品库</div>
+    </div>
+    <div class="df-loop"><div class="lp"><span>↺ 维修记录 反哺 知识库</span></div></div>
+    <p class="muted small df-note">说明：维修记录一方面<b>存进产品库</b>，一方面<b>反哺知识库</b>；与 02 中「维修记录供复盘和给厂家反馈」、08 中「按反馈补知识库」相互衔接。</p>
+  </div>
+
+  <div class="card">
+    <h3>🧩 爆炸图指导示意 <span class="tag t-sug">示意图</span></h3>
+    <div class="xv">
+      <svg viewBox="0 0 420 260" role="img" aria-label="爆炸图示意：外壳、主板、底座分层展开，标出螺丝位置与力矩">
+        <defs><marker id="xa" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#94a3b8"/></marker></defs>
+        <g font-size="12" fill="#334155">
+          <polygon points="70,40 250,40 290,70 110,70" fill="#e2e8f0" stroke="#64748b"/>
+          <text x="300" y="60">上盖</text>
+          <polygon points="70,115 250,115 290,145 110,145" fill="#ccfbf1" stroke="#0d9488"/>
+          <rect x="130" y="120" width="40" height="14" fill="#99f6e4" stroke="#0d9488" transform="skewX(0)"/>
+          <text x="300" y="135">内部部件</text>
+          <polygon points="70,190 250,190 290,220 110,220" fill="#e2e8f0" stroke="#64748b"/>
+          <text x="300" y="210">底座</text>
+          <line x1="180" y1="76" x2="180" y2="108" stroke="#94a3b8" stroke-dasharray="4 3" marker-end="url(#xa)"/>
+          <line x1="180" y1="151" x2="180" y2="183" stroke="#94a3b8" stroke-dasharray="4 3" marker-end="url(#xa)"/>
+          <g fill="#f97316" stroke="#fff" stroke-width="1.5">
+            <circle cx="92" cy="205" r="6"/><circle cx="268" cy="205" r="6"/><circle cx="92" cy="55" r="6"/><circle cx="268" cy="55" r="6"/>
+          </g>
+          <g font-size="11" fill="#c2410c" font-weight="700"><text x="86" y="209" fill="#fff">1</text><text x="262" y="209" fill="#fff">2</text><text x="86" y="59" fill="#fff">3</text><text x="262" y="59" fill="#fff">4</text></g>
+          <rect x="10" y="232" width="400" height="22" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+          <text x="20" y="247" font-size="11.5" fill="#9a3412">● 螺丝位置  ·  力矩：按手册原文标注  ·  📎 来源：维修手册对应段落</text>
+        </g>
+      </svg>
+      <div>
+        <p><b>画面上要呈现的信息</b>（来自讨论）：</p>
+        <ul>
+          <li>爆炸图展示拆解层次</li>
+          <li>图上标出<b>螺丝位置</b></li>
+          <li>图上标出<b>力矩</b></li>
+          <li>每一步引用都<b>标出来源</b></li>
+          <li>摄像头实时看操作，<b>不对就纠正</b></li>
+        </ul>
+        <p class="muted small">左图仅为版式示意，不代表任何具体设备；力矩等具体数值应以说明书 / 维修手册原文为准，本报告不设定具体数值。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🆚 与 02「使用场景」相比，本章新增 / 细化的点</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>环节</th><th>02 概念定义中的描述</th><th>03 用户端作业流程中的细化</th></tr></thead>
+      <tbody>
+        <tr><td>识别</td><td>摄像头看到设备，采集型号</td><td>对着坏设备<b>拍照</b>，识别<b>型号和序列号</b></td></tr>
+        <tr><td>检索</td><td>根据经验库指导；知识库转向量库，大模型指导</td><td>去向量库检索说明书和维修手册，找到<b>最匹配的段落</b>，<b>每步引用标出来源</b></td></tr>
+        <tr><td>拆解指导</td><td>可视化教拆解和检查</td><td><b>爆炸图</b>上标<b>螺丝位置和力矩</b></td></tr>
+        <tr><td>视觉反馈</td><td>通过视觉反馈逐步指导直到修好</td><td>摄像头<b>实时</b>看操作，<b>发现不对就纠正</b>，直到设备恢复正常</td></tr>
+        <tr><td>记录</td><td>维修记录存下来，供复盘和给厂家反馈</td><td>生成维修记录，<b>存进产品库</b>，也<b>反哺知识库</b></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 用户端作业流程 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="qw-1"><label for="qw-1">识别出的序列号具体用来做什么（例如关联产品库中的设备档案）？</label></li>
+      <li><input type="checkbox" id="qw-2"><label for="qw-2">「产品库」和「知识库」分别存什么、边界怎么划？</label></li>
+      <li><input type="checkbox" id="qw-3"><label for="qw-3">爆炸图从哪里来：手册自带、人工绘制，还是其他方式？力矩数据手册里没有时怎么处理？</label></li>
+      <li><input type="checkbox" id="qw-4"><label for="qw-4">维修记录反哺知识库之前，是否需要人工审核，避免错误经验进入知识库？</label></li>
+      <li><input type="checkbox" id="qw-5"><label for="qw-5">「发现不对就纠正」依据什么判断？判断不准时如何与「不确定就说不确定」的原则衔接？</label></li>
+      <li><input type="checkbox" id="qw-6"><label for="qw-6">MVP（04 原型验证）要覆盖这 9 步中的哪些，哪些可以后置？<span class="tag t-sug">建议</span></label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 04 原型验证 (原 03) ================= -->
+<section id="s3" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c3)">04</div>
+    <h2><span class="en">PROTOTYPE VALIDATION</span>原型验证</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c3)">做<b>最小可用版（MVP）</b>：只选<b>一条最简单的设备</b>，把「识别型号 → 修好」全流程跑通，用<b>现成样机</b>测试。</div>
+
+  <div class="accept">
+    <span class="lbl">✅ MVP 验收标准</span>
+    <div class="q">技师<em>不看说明书</em>、<em>只靠应用</em>，能<em>独立完成一次维修</em>。</div>
+    <div class="checks">
+      <div><b>① 不看说明书</b><br>过程中不翻阅纸质或电子说明书</div>
+      <div><b>② 只靠应用</b><br>所有指引都来自维修助手</div>
+      <div><b>③ 独立完成一次维修</b><br>技师自己动手，从识别型号到修好</div>
+    </div>
+  </div>
+
+  <div class="grid g3">
+    <div class="card"><h3>🎯 范围 <span class="tag t-ok">已确认</span></h3>
+      <ul><li>聚焦<b>一条最简单的设备</b></li><li>候选：<b>路由器</b> 或 <b>电源适配器</b></li></ul></div>
+    <div class="card"><h3>🔁 流程 <span class="tag t-ok">已确认</span></h3>
+      <p>从<b>识别型号</b>到<b>修好</b>，<b>全流程跑通</b>，覆盖型号识别、语音问诊、可视化拆解指导三个核心功能。</p></div>
+    <div class="card"><h3>🧪 测试方式 <span class="tag t-ok">已确认</span></h3>
+      <p>用<b>现成样机</b>测试。</p></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>📋 MVP 测试记录要点 <span class="tag t-sug">建议</span></h3>
+    <p class="muted small">以下为整理时补充的建议项，用于让验收过程可复盘，具体是否采用待讨论。</p>
+    <div class="tbl"><table>
+      <thead><tr><th>记录项</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td>型号是否一次识别成功</td><td>检验型号识别入口是否可靠</td></tr>
+        <tr><td>技师是否中途求助说明书 / 他人</td><td>直接对应验收标准 ①②③</td></tr>
+        <tr><td>AI 回答“不确定”的次数和位置</td><td>发现知识库缺口</td></tr>
+        <tr><td>卡住的步骤及原因</td><td>改进可视化引导</td></tr>
+        <tr><td>每一步是否能追溯到原文</td><td>检验差异化点是否成立</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 原型验证 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q3-1"><label for="q3-1">MVP 最终选路由器还是电源适配器？选定哪一个具体型号？</label></li>
+      <li><input type="checkbox" id="q3-2"><label for="q3-2">样机上的故障怎么设置：预设已知故障，还是用真实坏机？</label></li>
+      <li><input type="checkbox" id="q3-3"><label for="q3-3">找几位技师参加测试？是否需要不同经验水平的技师？</label></li>
+      <li><input type="checkbox" id="q3-4"><label for="q3-4">MVP 知识库需要准备哪些资料（该型号的说明书、维修手册等）？</label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 04 ================= -->
+<section id="s4" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c4)">05</div>
+    <h2><span class="en">DEVELOPMENT</span>开发</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c4)"><b>全部自研</b>。本框架中开发阶段<b>当黑盒处理</b>，重点放在<b>上线运营</b>。</div>
+
+  <div class="card">
+    <h3>⬛ 开发黑盒 <span class="tag t-ok">已确认</span></h3>
+    <div class="bb">
+      <div class="io"><b>输入</b><br>需求洞察结论<br>概念定义（场景 / 核心功能 / 差异化）<br>MVP 验证结果</div>
+      <div class="ar">→</div>
+      <div class="box"><b>全部自研</b><span class="small" style="color:#9ca3af">开发阶段按黑盒处理<br>内部细节本框架不展开</span></div>
+      <div class="ar">→</div>
+      <div class="io"><b>输出</b><br>可交给固定客户试用的应用</div>
+    </div>
+    <p class="muted small" style="margin-top:10px">输入 / 输出的具体划分为整理时的示意，用于衔接前后阶段。<span class="tag t-sug">建议</span></p>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 开发 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q4-1"><label for="q4-1">黑盒对外的交付节点怎么约定：什么状态算“可以给固定客户试用”？</label></li>
+      <li><input type="checkbox" id="q4-2"><label for="q4-2">开发期间，知识库的整理（资料收集、入向量库）由谁负责、是否与开发并行？</label></li>
+      <li><input type="checkbox" id="q4-3"><label for="q4-3">应用首发支持哪些手机平台？</label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 06 技术实现 (NEW) ================= -->
+<section id="tech" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c8)">06</div>
+    <h2><span class="en">TECHNICAL IMPLEMENTATION</span>技术实现 <span class="tag newtag" style="background:var(--c8-soft);color:var(--c8)">v2 新增</span></h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c8)">「05 开发」保持黑盒不变；本章单独记录已讨论的<b>技术实现方向</b>：跨平台应用端 + <b>API 服务 / 向量数据库</b>后端 + <b>RAG 大模型层（每步挂原文出处）</b>，应用走<b>应用商店</b>、后端<b>容器化</b>。</div>
+
+  <div class="card">
+    <h3>🏗️ 分层架构 <span class="tag t-ok">已确认</span></h3>
+    <div class="arch">
+      <div class="layer" style="--lc:#a5b4fc;--ls:#f5f7ff">
+        <div class="ln" style="background:#4f46e5"><small>LAYER 1</small>📱 应用端</div>
+        <div class="lb">
+          <div class="bx"><b>跨平台框架</b><span class="muted">应用端整体技术形态</span></div>
+          <div class="bx"><b>摄像头调用</b><span class="muted">走系统 API</span></div>
+          <div class="bx"><b>语音</b><span class="muted">实时语音识别 + 语音合成</span></div>
+          <div class="bx"><b>视觉引导</b><span class="muted">调用大模型多模态接口</span></div>
+        </div>
+      </div>
+      <div class="arch-link">▼ ▲ 请求 / 响应</div>
+      <div class="layer" style="--lc:#93c5fd;--ls:#f3f8ff">
+        <div class="ln" style="background:#2563eb"><small>LAYER 2</small>🖥️ 后端</div>
+        <div class="lb">
+          <div class="bx"><b>API 服务</b><span class="muted">承接应用端请求</span></div>
+          <div class="bx"><b>向量数据库</b><span class="muted">存放向量化后的知识</span></div>
+          <div class="bx"><b>知识入库管道</b><span class="muted">文档解析 + 向量化</span></div>
+        </div>
+      </div>
+      <div class="arch-link">▼ ▲ 检索 / 生成</div>
+      <div class="layer" style="--lc:#c4b5fd;--ls:#faf7ff">
+        <div class="ln" style="background:#7c3aed"><small>LAYER 3</small>🧠 大模型层</div>
+        <div class="lb">
+          <div class="bx"><b>检索增强生成（RAG）</b><span class="muted">基于检索到的原文段落生成回答</span></div>
+          <div class="bx"><b>每步回答挂原文出处</b><span class="muted">对应差异化「每步可追溯到原文」</span></div>
+          <div class="bx"><b>多模态接口</b><span class="muted">供应用端视觉引导调用</span></div>
+        </div>
+      </div>
+      <div class="layer" style="--lc:#cbd5e1;--ls:#f8fafc;margin-top:6px">
+        <div class="ln" style="background:#475569"><small>DEPLOY</small>🚀 部署</div>
+        <div class="lb">
+          <div class="bx"><b>应用 → 应用商店</b><span class="muted">应用端通过应用商店分发</span></div>
+          <div class="bx"><b>后端 → 容器化</b><span class="muted">后端服务容器化部署</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📥 知识入库管道 <span class="tag t-ok">已确认</span></h3>
+    <div class="pipe2">
+      <div class="p"><b>原始资料</b>说明书、维修手册等</div>
+      <div class="p"><b>文档解析</b>拆出可检索的段落</div>
+      <div class="p"><b>向量化</b>段落转为向量</div>
+      <div class="p"><b>向量数据库</b>入库，供检索</div>
+      <div class="p fb"><b>维修记录反哺</b>见 03，回流知识库</div>
+    </div>
+    <p class="muted small" style="margin-top:10px">「文档解析 → 向量化 → 向量数据库」为已确认内容；各环节的说明文字，以及把「维修记录反哺」画进管道（衔接 03 章），是整理时的示意。<span class="tag t-sug">建议</span></p>
+  </div>
+
+  <div class="card">
+    <h3>🔁 一次请求的流转 <span class="tag t-sug">示意</span></h3>
+    <p class="muted small">用已确认的组件把 03「用户端作业流程」串起来；具体调用顺序和接口划分待开发确认。</p>
+    <ol class="rq">
+      <li><span class="who">应用端</span><span class="what">通过<b>系统 API</b> 调用摄像头拍照，识别型号和序列号（03 · 步骤 2）</span></li>
+      <li><span class="who">应用端</span><span class="what"><b>实时语音识别</b>把用户的故障描述转成文字（03 · 步骤 3）</span></li>
+      <li><span class="who">后端</span><span class="what"><b>API 服务</b>接收请求，到<b>向量数据库</b>检索最匹配的说明书 / 维修手册段落（03 · 步骤 4）</span></li>
+      <li><span class="who">大模型层</span><span class="what"><b>RAG</b> 基于检索结果生成维修步骤，<b>每步回答挂原文出处</b>（03 · 步骤 5）</span></li>
+      <li><span class="who">应用端</span><span class="what">展示步骤与出处，并用<b>语音合成</b>播报</span></li>
+      <li class="vis"><span class="who">视觉引导</span><span class="what">摄像头画面经<b>大模型多模态接口</b>判断操作是否正确，不对就纠正（03 · 步骤 6–8）</span></li>
+      <li><span class="who">后端</span><span class="what">生成维修记录，存进产品库，并反哺知识库（03 · 步骤 9 → 入库管道）</span></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>🔗 技术组件与产品能力对照</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>产品能力（02 / 03）</th><th>对应技术组件（已确认）</th></tr></thead>
+      <tbody>
+        <tr><td>型号识别 / 拍照</td><td>摄像头调用走系统 API</td></tr>
+        <tr><td>语音问诊</td><td>实时语音识别 + 语音合成</td></tr>
+        <tr><td>可视化拆解指导 / 实时纠正</td><td>视觉引导：大模型多模态接口</td></tr>
+        <tr><td>可靠知识库 + 每步可追溯到原文</td><td>文档解析和向量化管道 → 向量数据库 → RAG，每步回答挂原文出处</td></tr>
+        <tr><td>上线给固定客户试用（07）</td><td>应用走应用商店；后端容器化</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 技术实现 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="qt-1"><label for="qt-1">跨平台框架、向量数据库、大模型（含多模态）的具体选型？</label></li>
+      <li><input type="checkbox" id="qt-2"><label for="qt-2">实时语音识别 / 合成和多模态接口用自研部署还是调用外部服务？这与「全部自研」的边界如何界定？</label></li>
+      <li><input type="checkbox" id="qt-3"><label for="qt-3">「挂原文出处」的粒度到哪一级：文档、章节、页码还是段落？</label></li>
+      <li><input type="checkbox" id="qt-4"><label for="qt-4">维修现场弱网时，实时语音和视觉引导的延迟与可用性怎么保障？</label></li>
+      <li><input type="checkbox" id="qt-5"><label for="qt-5">容器化后端部署在哪里（公有云 / 自有服务器）？用户拍摄的画面和维修记录的存储与隐私如何处理？</label></li>
+      <li><input type="checkbox" id="qt-6"><label for="qt-6">上架应用商店前，首批固定客户试用是否需要内测分发渠道？<span class="tag t-sug">建议</span></label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 07 上线运营 (原 05) ================= -->
+<section id="s5" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c5)">07</div>
+    <h2><span class="en">LAUNCH &amp; OPERATIONS</span>上线运营</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c5)">第一批用户是<b>固定客户</b>：<b>直接给试用</b>，并<b>收集反馈</b>。</div>
+
+  <div class="grid g3">
+    <div class="card"><h3>🤝 首批用户 <span class="tag t-ok">已确认</span></h3><p><b>固定客户</b>。</p><p class="muted small">从固定客户起步，便于快速拿到真实反馈。<span class="tag t-sug">建议</span></p></div>
+    <div class="card"><h3>🎁 获客方式 <span class="tag t-ok">已确认</span></h3><p><b>直接给试用</b>。</p></div>
+    <div class="card"><h3>📨 反馈 <span class="tag t-ok">已确认</span></h3><p><b>收集试用反馈</b>，作为迭代优化的输入。</p></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>🗒 反馈收集维度 <span class="tag t-sug">建议</span></h3>
+    <div class="tbl"><table>
+      <thead><tr><th>维度</th><th>可以问 / 可以看的</th><th>流向</th></tr></thead>
+      <tbody>
+        <tr><td>知识覆盖</td><td>遇到哪些型号 / 故障助手答不上或说“不确定”</td><td>→ 08 补知识库</td></tr>
+        <tr><td>引导效果</td><td>哪一步看不懂、拆解指导哪里不清楚</td><td>→ 08 改进引导</td></tr>
+        <tr><td>识别与语音</td><td>型号识别、语音沟通在现场是否好用</td><td>→ 08 改进引导</td></tr>
+        <tr><td>付费意愿</td><td>试用后是否愿意订阅</td><td>→ 01 订阅设计</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="disc">
+    <h3>💬 待确认问题 · 上线运营 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q5-1"><label for="q5-1">首批固定客户具体是哪几家 / 哪些人？</label></li>
+      <li><input type="checkbox" id="q5-2"><label for="q5-2">试用期多长？试用结束后如何转为订阅？</label></li>
+      <li><input type="checkbox" id="q5-3"><label for="q5-3">反馈通过什么渠道收集（应用内、微信群、定期回访）？由谁负责跟进？</label></li>
+      <li><input type="checkbox" id="q5-4"><label for="q5-4">试用阶段的维修记录能否用于改进产品，需要客户怎样同意？</label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 06 ================= -->
+<section id="s6" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:var(--c6)">08</div>
+    <h2><span class="en">ITERATION</span>迭代优化</h2>
+  </div>
+  <div class="one-line" style="border-left-color:var(--c6)">根据试用反馈<b>不断补知识库</b>、<b>改进引导效果</b>。</div>
+
+  <div class="card">
+    <h3>🔄 迭代闭环 <span class="tag t-ok">已确认</span></h3>
+    <div class="loop">
+      <div><b>① 试用反馈</b>固定客户使用中发现的问题</div>
+      <div><b>② 补知识库</b>补充说明书、维修手册等资料</div>
+      <div><b>③ 改进引导效果</b>让拆解 / 检查指导更清楚</div>
+      <div><b>④ 再次试用</b>验证改进是否有效</div>
+    </div>
+    <div class="loopback">↺ ④ 再回到 ① ，持续循环</div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card"><h3>📚 补知识库 <span class="tag t-ok">已确认</span></h3>
+      <ul>
+        <li>知识库本就是<b>逐步添加</b>的（见 02）；维修记录也会<b>反哺知识库</b>（见 03）</li>
+        <li>反馈中暴露的缺口 → 补资料 → 转入向量库</li>
+        <li class="muted small">AI 说“不确定”的记录可作为补库线索 <span class="tag t-sug">建议</span></li>
+      </ul></div>
+    <div class="card"><h3>🎯 改进引导效果 <span class="tag t-ok">已确认</span></h3>
+      <ul>
+        <li>根据技师卡住的步骤优化可视化拆解与检查指导</li>
+        <li class="muted small">维修记录可用于复盘哪些步骤最容易出问题 <span class="tag t-sug">建议</span></li>
+      </ul></div>
+  </div>
+
+  <div class="disc" style="margin-top:16px">
+    <h3>💬 待确认问题 · 迭代优化 <small>勾选 = 已讨论</small></h3>
+    <ol>
+      <li><input type="checkbox" id="q6-1"><label for="q6-1">补知识库的优先级怎么排：按反馈频次、客户重要性，还是设备品类？</label></li>
+      <li><input type="checkbox" id="q6-2"><label for="q6-2">用什么来衡量“引导效果变好了”（例如沿用 MVP 验收标准复测）？</label></li>
+      <li><input type="checkbox" id="q6-3"><label for="q6-3">迭代节奏：多久发一次版本 / 更新一次知识库？</label></li>
+      <li><input type="checkbox" id="q6-4"><label for="q6-4">何时从 MVP 的单一设备扩展到更多设备品类？扩展的判断条件是什么？</label></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<section id="todo" data-sec>
+  <div class="sec-head">
+    <div class="sec-no" style="background:linear-gradient(135deg,#7c3aed,#2f6bff)">★</div>
+    <h2><span class="en">DECISIONS &amp; OPEN QUESTIONS</span>已确认要点 &amp; 待确认问题汇总</h2>
+  </div>
+
+  <div class="card">
+    <h3>✅ 已确认要点一览</h3>
+    <div class="tbl"><table class="summary-tbl">
+      <thead><tr><th>阶段</th><th>已确认内容</th></tr></thead>
+      <tbody>
+        <tr><td><a href="#s1">01 需求洞察</a></td><td>目标用户：保外设备的一线维修技术人员；需求：过保后的维修步骤指引和排障帮助；现状：靠师傅口口相传和网上搜索，信息零散、真假难辨；付费：订阅。</td></tr>
+        <tr><td><a href="#s2">02 概念定义</a></td><td>应用（非小程序）、AI 辅助；场景：摄像头看设备采集型号 → 语音沟通问题 → 按经验库指导 → 可视化教拆解与检查 → 视觉反馈逐步指导直到修好；知识库：说明书、维修手册等逐步添加，转向量库，大模型指导；核心功能：型号识别、语音问诊、可视化拆解指导；差异化：可靠知识库 + 每步可追溯原文、不确定就说不确定不瞎猜、维修记录存档供复盘和给厂家反馈。</td></tr>
+        <tr><td><a href="#workflow">03 用户端作业流程</a></td><td>打开应用 → 对着坏设备拍照，识别型号和序列号 → 语音描述故障现象 → 助手在向量库检索相关说明书和维修手册，找到最匹配段落，每步引用标出来源 → 可视化教拆解（爆炸图标螺丝位置和力矩），摄像头实时看操作、不对就纠正 → 一步一步直到设备恢复正常 → 生成维修记录，存进产品库，也反哺知识库。</td></tr>
+        <tr><td><a href="#s3">04 原型验证</a></td><td>MVP 聚焦一条最简单设备（如路由器或电源适配器），从识别型号到修好全流程跑通，用现成样机测试；验收：技师不看说明书、只靠应用能独立完成一次维修。</td></tr>
+        <tr><td><a href="#s4">05 开发</a></td><td>全部自研；开发阶段当黑盒处理，重点在上线运营。</td></tr>
+        <tr><td><a href="#tech">06 技术实现</a></td><td>应用端：跨平台框架，摄像头调用走系统 API，语音用实时语音识别加合成，视觉引导用大模型多模态接口；后端：API 服务 + 向量数据库，知识入库用文档解析和向量化管道；大模型层：检索增强生成（RAG），每步回答都挂原文出处；部署：应用走应用商店，后端容器化。</td></tr>
+        <tr><td><a href="#s5">07 上线运营</a></td><td>第一批用户是固定客户，直接给试用并收集反馈。</td></tr>
+        <tr><td><a href="#s6">08 迭代优化</a></td><td>根据试用反馈不断补知识库、改进引导效果。</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>❓ 优先拍板的问题 <span class="tag t-sug">建议</span></h3>
+    <p class="muted small">以下是整理时认为会直接影响下一步动作的问题，排序仅供参考。各阶段完整问题见对应章节的「待确认问题」。</p>
+    <div class="tbl"><table>
+      <thead><tr><th>#</th><th>问题</th><th>影响阶段</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>MVP 选路由器还是电源适配器，具体哪个型号</td><td><a href="#s3">04</a></td></tr>
+        <tr><td>2</td><td>MVP 知识库资料的来源与授权</td><td><a href="#s2">02</a> / <a href="#s3">04</a></td></tr>
+        <tr><td>3</td><td>AI “不确定”时的后续处理方式</td><td><a href="#s2">02</a></td></tr>
+        <tr><td>4</td><td>首批固定客户名单、试用期与反馈渠道</td><td><a href="#s5">07</a></td></tr>
+        <tr><td>5</td><td>订阅付费主体、定价与周期</td><td><a href="#s1">01</a></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<footer>
+  《维修助手 · 产品生命周期框架》讨论稿 v2 · 2026-09-29 · 根据通话讨论内容整理。<br>
+  标注 <span class="tag t-ok">已确认</span> 的内容来自讨论；标注 <span class="tag t-sug">建议</span> / <span class="tag t-q">待确认</span> 的内容为整理时补充，均未决策。
+</footer>
+</main>
+
+<script>
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('[data-sec]'));
+  var links=[].slice.call(document.querySelectorAll('#nav a, #chips a'));
+  var chips=document.getElementById('chips');
+  function setActive(id){
+    links.forEach(function(a){
+      var on=a.getAttribute('href')==='#'+id;
+      a.classList.toggle('active',on);
+      if(on && a.parentNode===chips){
+        var l=a.offsetLeft-chips.clientWidth/2+a.clientWidth/2;
+        chips.scrollTo?chips.scrollTo({left:l,behavior:'smooth'}):(chips.scrollLeft=l);
+      }
+    });
+  }
+  function onScroll(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    document.getElementById('progress').style.width=(h>0?y/h*100:0)+'%';
+    var mark=window.innerHeight*0.3, cur=secs[0].id;
+    for(var i=0;i<secs.length;i++){ if(secs[i].getBoundingClientRect().top-mark<=0) cur=secs[i].id; }
+    if(h-y<4) cur=secs[secs.length-1].id;
+    setActive(cur);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll);
+  onScroll();
+
+  // mobile nav
+  var btn=document.getElementById('navBtn');
+  btn.addEventListener('click',function(e){e.stopPropagation();document.body.classList.toggle('nav-open');});
+  document.getElementById('nav').addEventListener('click',function(){document.body.classList.remove('nav-open');});
+  document.addEventListener('click',function(e){ if(!document.getElementById('side').contains(e.target)) document.body.classList.remove('nav-open'); });
+
+  // discussion checkboxes (persist locally)
+  var KEY='repair-assistant-report-q';
+  var st={}; try{st=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('.disc input[type=checkbox]'));
+  boxes.forEach(function(b){
+    if(st[b.id]){b.checked=true;b.closest('li').classList.add('done');}
+    b.addEventListener('change',function(){
+      b.closest('li').classList.toggle('done',b.checked);
+      st[b.id]=b.checked; try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}
+    });
+  });
+  document.getElementById('resetQ').addEventListener('click',function(){
+    st={}; try{localStorage.removeItem(KEY);}catch(e){}
+    boxes.forEach(function(b){b.checked=false;b.closest('li').classList.remove('done');});
+  });
+})();
+</script>
+</body>
+</html>
